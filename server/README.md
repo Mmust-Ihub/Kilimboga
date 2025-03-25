@@ -6,7 +6,7 @@
 
 **Things to take note of:**
 
-#### base_url: https://
+#### base_url: https://kilimboga.vercel.app/
 
 </div>
 
