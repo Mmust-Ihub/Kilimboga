@@ -16,6 +16,8 @@
     "nodemon": "^3.1.9"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.0",
+    "axios": "^1.8.4",
     "bcryptjs": "^3.0.2",
     "cloudinary": "^2.6.0",
     "compression": "^1.8.0",
@@ -26,6 +28,7 @@
     "express": "^4.21.2",
     "express-mongo-sanitize": "^2.2.0",
     "express-rate-limit": "^7.5.0",
+    "firebase-admin": "^13.2.0",
     "helmet": "^8.0.0",
     "http-status": "^2.1.0",
     "joi": "^17.13.3",

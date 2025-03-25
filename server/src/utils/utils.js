@@ -1,6 +1,9 @@
 import _ from "lodash";
 import nodemailer from "nodemailer";
 import config from "../config/config.js";
+import { userModel } from "../models/user.model.js";
+import allRoles from "../config/roles.js";
+import axios from "axios";
 
 export const blockList = (initialObj, arrayToblock) => {
   return _.omit(initialObj, arrayToblock);
@@ -36,6 +39,46 @@ export const sendEmail = async (payload) => {
       html: payload.body,
     });
   } catch (error) {
-    console.error(`Error sending email: ${err.message}`);
+    console.error(`Error sending email: ${error.message}`);
   }
+};
+
+export const getNearbyExperts = async (farmerLocation) => {
+  const experts = await userModel
+    .find(
+      {
+        role: allRoles.EXPERT,
+        location: {
+          $nearSphere: {
+            $geometry: {
+              type: "Point",
+              coordinates: farmerLocation.coordinates,
+            },
+            $maxDistance: config.vet.distance,
+            $minDistance: 0,
+          },
+        },
+      },
+      {
+        firstName: 1,
+        lastName: 1,
+        email: 1,
+        phoneNumber: 1,
+      }
+    )
+    .limit(config.vet.limit);
+  return experts;
+};
+
+export const getLocation = async (longitude, latitude) => {
+  const url = "https://nominatim.openstreetmap.org/reverse";
+  const params = {
+    lat: latitude,
+    lon: longitude,
+    format: "json",
+  };
+  const response = await axios.get(url, {
+    params,
+  });
+  return response.data;
 };
