@@ -1,5 +1,5 @@
 
-
+![image info](./Docs/images/greenhouse.jpeg)
 # Kilimboga
 
 **This project is a smart greenhouse management platform designed to help smallholder farmers in kenya overcome challenges such as pest control, water shortages, and market access through real-time monitoring, AI-driven recommendations, and financial support integration. By providing data-driven insights, training resources, and a marketplace connection, the platform enhances productivity, sustainability, and profitability in greenhouse farming.**

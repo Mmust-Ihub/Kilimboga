@@ -37,7 +37,7 @@ if (config.env == "production") {
   app.use("/api/v1/auth", authLimit);
 }
 app.get("/api/healthcheck", async (req, res) => {
-  res.status(200).json({ status: "success", message: "Api is up and running" });
+  res.status(200).json({ status: "success", message: "Api is up and running..." });
 });
 app.use("/api/v1", router);
 
