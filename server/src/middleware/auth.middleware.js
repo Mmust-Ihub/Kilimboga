@@ -30,9 +30,6 @@ export const authorize = (roles) => {
 export const authenticate = catchAsync(async (req, res, next) => {
     const authHeader = req.headers?.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ message: 'Authentication required' });
-    }
-    if (!headers) {
       throw new ApiError(401, "authentication headers required.");
     }
     const token = authHeader.split(" ")[1];
@@ -47,7 +44,7 @@ export const authenticate = catchAsync(async (req, res, next) => {
           throw new ApiError(401, error.message);
         }
       }
-      const user = await userModel.findById(payload.email);
+      const user = await userModel.findById(payload.aud);
         if (!user) {
           throw new ApiError(401, "User not found");
         }

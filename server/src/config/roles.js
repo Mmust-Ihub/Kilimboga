@@ -3,7 +3,7 @@ const allRoles = {
   ADMIN: "admin",
   EXPERT: "expert",
   FARMER: "farmer",
-  AGROVET: "agrovet"
+  AGROVET: "vendor"
 }
 export default allRoles
 

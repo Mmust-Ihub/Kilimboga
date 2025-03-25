@@ -8,7 +8,7 @@
 <p>Smallholder farming plays a crucial role in global food production, contributing <b>approximately
 70%</b> of the world's food supply while utilizing less than 25% of all agricultural land. However,
 smallholder farmers, particularly in Kenya, face significant challenges that hinder productivity
-and sustainability. Pests, diseases, high operational costs, lack of technical knowledge, and 
+and sustainability. Pests, diseases, high operational costs, lack of technical knowledge, and
 climate variability continue to affect yields and economic viability.
 Greenhouse farming has emerged as a solution to mitigate some of these challenges by
 providing controlled environments for crop production. Despite its success in large-scale
