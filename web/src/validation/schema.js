@@ -6,6 +6,8 @@ function validate(schema, data) {
             return signUpSchema.validate(data)
         case 'login':
             return loginSchema.validate(data)
+        case 'product':
+            return productSchema.validate(data)
         case 'firstName':
             return firstName.validate(data)
         case 'lastName':
@@ -16,6 +18,16 @@ function validate(schema, data) {
             return password.validate(data)
         case 'phoneNumber':
             return phoneNumber.validate(data)
+        case 'productName':
+            return productName.validate(data)
+        case 'productDescription':
+            return productDescription.validate(data)
+        case 'productCategory':
+            return productCategory.validate(data)
+        case 'productQuantity':
+            return productQuantity.validate(data)
+        case 'productPrice':
+            return productPrice.validate(data)
         default:
             return { error: 'Invalid schema' }
     }
@@ -152,5 +164,157 @@ const loginSchema = Joi.object({
         }),
 })
     .with('email', 'password')
+
+const productSchema = Joi.object({
+    productName: Joi.string()
+        .alphanum()
+        .min(3)
+        .max(30)
+        .required()
+        .messages({
+            'string.alphanum': 'Product name must only contain letters and numbers.',
+            'string.min': 'Product name must be at least 3 characters long.',
+            'string.max': 'Product name must not exceed 30 characters.',
+            'string.empty': 'Product name cannot be empty.',
+            'any.required': 'Product name is required.',
+        }),
+
+    productDescription: Joi.string()
+        .alphanum()
+        .min(3)
+        .max(100)
+        .required()
+        .messages({
+            'string.alphanum': 'Product description must only contain letters and numbers.',
+            'string.min': 'Product description must be at least 3 characters long.',
+            'string.max': 'Product description must not exceed 100 characters.',
+            'string.empty': 'Product description cannot be empty.',
+            'any.required': 'Product description is required.',
+        }),
+
+    productCategory: Joi.string()
+        .alphanum()
+        .min(3)
+        .max(100)
+        .required()
+        .messages({
+            'string.alphanum': 'Product category must only contain letters and numbers.',
+            'string.min': 'Product category must be at least 3 characters long.',
+            'string.max': 'Product category must not exceed 100 characters.',
+            'string.empty': 'Product category cannot be empty.',
+            'any.required': 'Product category is required.',
+        }),
+    
+    productImage: Joi.string()
+        .required()
+        .messages({
+            'string.empty': 'Product image cannot be empty.',
+            'any.required': 'Product image is required.',
+        }),
+
+    productQuantity: Joi.number()
+        .integer()
+        .min(1)
+        .messages({
+            'number.integer': 'Product quantity must be an integer.',
+            'number.min': 'Product quantity must be at least 1.',
+            'number.empty': 'Product quantity cannot be empty.',
+            'any.required': 'Product quantity is required.',
+        }),
+
+    productPrice: Joi.number()
+        .integer()
+        .min(1)
+        .messages({
+            'number.integer': 'Product price must be an integer.',
+            'number.min': 'Product price must be at least 1.',
+            'number.empty': 'Product price cannot be empty.',
+            'any.required': 'Product price is required.',
+        }),
+}) 
+    .with('productName', 'productDescription')
+    .with('productQuantity', 'productPrice') 
+    .with('productCategory', 'productName')
+    .with('productImage', 'productDescription')
+
+const productName = Joi.object({
+    productName: Joi.string()
+    .alphanum()
+    .min(3)
+    .max(30)
+    .required()
+    .messages({
+        'string.alphanum': 'Product name must only contain letters and numbers.',
+        'string.min': 'Product name must be at least 3 characters long.',
+        'string.max': 'Product name must not exceed 30 characters.',
+        'string.empty': 'Product name cannot be empty.',
+        'any.required': 'Product name is required.',
+    })
+})
+
+const productDescription = Joi.object({
+    productDescription: Joi.string()
+        .alphanum()
+        .min(3)
+        .max(100)
+        .required()
+        .messages({
+            'string.alphanum': 'Product description must only contain letters and numbers.',
+            'string.min': 'Product description must be at least 3 characters long.',
+            'string.max': 'Product description must not exceed 100 characters.',
+            'string.empty': 'Product description cannot be empty.',
+            'any.required': 'Product description is required.',
+        })
+})
+  
+const productCategory = Joi.object({
+    productCategory: Joi.string()
+        .alphanum()
+        .min(3)
+        .max(100)
+        .required()
+        .messages({
+            'string.alphanum': 'Product category must only contain letters and numbers.',
+            'string.min': 'Product category must be at least 3 characters long.',
+            'string.max': 'Product category must not exceed 100 characters.',
+            'string.empty': 'Product category cannot be empty.',
+            'any.required': 'Product category is required.',
+        })
+})
+
+const productImage = Joi.object({
+    productImage: Joi.string()
+        .required()
+        .messages({
+            'string.empty': 'Product image cannot be empty.',
+            'any.required': 'Product image is required.',
+        })
+})
+
+const productQuantity = Joi.object({
+    productQuantity: Joi.number()
+        .integer()
+        .min(1)
+        .messages({
+            'number.integer': 'Product quantity must be an integer.',
+            'number.empty': 'Product quantity cannot be empty.',
+            'any.required': 'Product quantity is required.',
+            'number.base': 'Product quantity must be a number.',
+            'number.min': 'Product quantity must be at least 1.',
+        })
+})
+
+const productPrice = Joi.object({
+    productPrice: Joi.number()
+        .integer()
+        .min(1)
+        .messages({
+            ' number.integer': 'Product price must be an integer.',
+            'number.empty': 'Product price cannot be empty.',
+            'number.base': 'Product price must be a number',
+            'number.min': 'Product price must be at least 1',
+            'any.required': 'Product price is required.',
+        })
+})
 
 export default validate
