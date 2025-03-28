@@ -13,7 +13,7 @@ export const allowList = (initialObj, arrayToAllow) => {
   return _.pick(initialObj, arrayToAllow);
 };
 
-export const generateVerificationCode = (length) => {
+export const generateCode = (length) => {
   const charset = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let code = "";
   for (let i = 0, n = charset.length; i < length; i++) {

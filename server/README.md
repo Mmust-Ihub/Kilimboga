@@ -17,6 +17,7 @@
 3. [Admin](#admin)
 4. [Expert](#expert)
 5. [Vendor](#vendor)
+6. [IOT](#iot)
 
 # Authentication
 
@@ -99,6 +100,217 @@
   }
   ```
 
+# Farmer
+
+> ## profile
+>
+> > **request**
+
+- **_url_**: `{{base_url}}/api/v1/farmer/profile`
+- **_method:_** `GET`
+- **_headers:_**
+  - Authorization: Bearer **token**
+
+> > **response**
+
+- ```json
+  {
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "johndoe@gmail.com",
+    "phoneNumber": "0743512345"
+  }
+  ```
+
+> ## Statistics
+>
+> > **request**
+
+- **_url_**: `{{base_url}}/api/v1/farmer/stats`
+- **_method:_** `GET`
+- **_headers:_**
+  - Authorization: Bearer **token**
+
+> > **response**
+
+- ```json
+  {
+    "greenHouses": 2
+  }
+  ```
+
+> ## Add a greenhouse
+>
+> > **request**
+
+- **_url_**: `{{base_url}}/api/v1/farmer/green-house`
+- **_method:_** `POST`
+- **_headers:_**
+
+  - Authorization: Bearer **token**
+
+- **request_body:**
+
+- ```json
+       {
+        "name": "first",
+        "plant": "cabages",
+        "location": {
+            "coordinates": [1234, 123.40] "longitude(number), latitude(number)"
+        }
+    }
+  ```
+
+> ## List all greenhouses
+>
+> > **request**
+
+- **_url_**: `{{base_url}}/api/v1/farmer/green-house`
+- **_method:_** `GET`
+- **_headers:_**
+
+  - Authorization: Bearer **token**
+
+> > **response:**
+
+- ```json
+  [
+    {
+      "name": "first",
+      "farmId": "X5QK8"
+    }
+  ]
+  ```
+
+> ## get a single green house
+>
+> > **request**
+
+- **_url_**: `{{base_url}}/api/v1/farmer/green-house`
+- **_method:_** `GET`
+- **_headers:_**
+
+  - Authorization: Bearer **token**
+
+- **_Required query parameters:_**
+
+  | Parameter |  Type  | info       |
+  | :-------: | :----: | :--------- |
+  |    id     | string | the farmId |
+
+- **_example url_** :
+
+```yaml
+url: {{base_url}}/api/v1/farmer/green-house?id=X5QK8
+```
+
+> > **response:**
+
+- ```json
+  {
+    "name": "Simple",
+    "plant": "cabages",
+    "farmId": "X5QK8",
+    "schedule": "The plant growth schedule"
+  }
+  ```
+
+> ## Pest and Disease Prediction
+>
+> > **request**
+
+- **_url_**: `{{base_url}}/api/v1/farmer/predict`
+- **_method:_** `POST`
+- **_headers:_**
+
+  - Authorization: Bearer **token**
+
+- **_Required query parameters:_**
+
+  | Parameter |  Type  | options         |
+  | :-------: | :----: | :-------------- |
+  |   type    | string | disease or pest |
+
+- **_example url_** :
+
+```yaml
+url: {{base_url}}/api/v1/farmer/predict?type=pest
+```
+
+- **_request_body:_** (form data)
+
+```json
+{ "image": "image" }
+```
+
+> > **example response**
+
+- ```json
+  {
+    "crop": "Tomato",
+    "disease": "Tomato fruit worm (Helicoverpa zea) damage",
+    "other_crops_infested": [
+      "Corn, cotton, peppers, beans, and other vegetables"
+    ],
+    "cause": ["Larvae of the tomato fruit worm moth bore into the fruit."],
+    "life_cycle": [
+      "The moths lay eggs on the plant.  Eggs hatch into larvae that feed on the fruit. Larvae pupate in the soil, and emerge as adult moths."
+    ],
+    "remedy": [
+      "Handpick and destroy infested fruits.",
+      "Use Bacillus thuringiensis (Bt) based insecticides, following label instructions carefully.  These are generally safer for beneficial insects and the environment.",
+      "Consider using pheromone traps to monitor moth populations and reduce mating.",
+      "Insecticidal soaps can be effective against younger larvae, but require thorough coverage and may need repeated applications."
+    ],
+    "preventive_measures": [
+      "Rotate crops yearly to disrupt the pest's life cycle.",
+      "Remove plant debris and weeds after harvest to eliminate overwintering sites.",
+      "Monitor plants regularly for signs of infestation.",
+      "Consider using row covers to protect young plants from egg laying.",
+      "Use resistant tomato varieties if available."
+    ],
+    "environment_conditions": [
+      "Tomatoes prefer well-drained soil, consistent moisture, and temperatures between 65-85°F (18-29°C).",
+      "Avoid excessive watering, which can promote fungal diseases that weaken plants and make them more susceptible to pests."
+    ],
+    "nutrient_deficiency": [
+      "Nutrient deficiencies can weaken plants, making them more vulnerable to pests. Ensure adequate nitrogen, phosphorus, and potassium."
+    ],
+    "companion_planting": [
+      "Basil, marigolds, and certain herbs may repel some pests."
+    ],
+    "post_harvest_handling": [
+      "Handle tomatoes carefully to avoid bruising. Store in a cool, dry place to prevent spoilage."
+    ],
+    "imageUrl": "https://res.cloudinary.com/dqrw1zi7d/image/upload/v1743182881/kilimboga/rj2irzykbgnhfaguende.jpg",
+    "nearbyExperts": [
+      {
+        "_id": "67dc5d07bb2d7175a2b4d65e",
+        "firstName": "Antony",
+        "lastName": "Kariuki",
+        "email": "kariukiantony113@gmail.com",
+        "phoneNumber": "0743596180"
+      }
+    ]
+  }
+  ```
+
+  > ## Connect farmer to expert
+  >
+  > > **request**
+
+- **_url_**: `{{base_url}}/api/v1/farmer/connect`
+- **_method:_** `POST`
+- **_headers:_**
+
+  - Authorization: Bearer **token**
+
+- **_request_body:_**
+
+```json
+{ "imageUrl": "image url", "id": "the expert id" }
+```
+
 # Vendor
 
 > ## Statistics
@@ -108,7 +320,7 @@
 - **_url_**: `{{base_url}}/api/v1/vendor/stats`
 - **_method:_** `GET`
 - **_headers:_**
-  - Authorization: Bearer **token**
+- Authorization: Bearer **token**
 
 > > **response**
 
@@ -240,6 +452,7 @@ url: {{base_url}}/api/v1/vendor/product?id="product_id"
 ```
 
 > > **response**
+
 - **_status_code:_** `204`
 
 > ## Orders
@@ -254,9 +467,9 @@ url: {{base_url}}/api/v1/vendor/product?id="product_id"
 
 - **_Required query parameters:_**
 
-  | Parameter |  Type  | options |
-  | :-------: | :----: | :-------:
-  |   state   | string | *pending*, *delivered*
+  | Parameter |  Type  |        options         |
+  | :-------: | :----: | :--------------------: |
+  |   state   | string | _pending_, _delivered_ |
 
 - **_example url_** :
 
@@ -265,10 +478,19 @@ url: {{base_url}}/api/v1/vendor/orders?state="pending"
 ```
 
 > > **response**
+
 - **_status_code:_** `200`
 - **_response_body:_**
 - ```json
-   [
-    {}
-   ]
+  [{}]
   ```
+
+# IOT
+
+```
+
+```
+
+```
+
+```

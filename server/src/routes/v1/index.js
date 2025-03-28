@@ -4,6 +4,7 @@ import authRouter from "./auth.route.js";
 import farmerRouter from "./farmer.route.js";
 import adminRouter from "./admin.route.js";
 import vendorRouter from "./vendor.routes.js";
+import iotRouter from "./iot.routes.js";
 
 const router = Router();
 const defaultRoutes = [
@@ -22,6 +23,10 @@ const defaultRoutes = [
   {
     path: "/vendor",
     route: vendorRouter,
+  },
+  {
+    path: "/iot",
+    route: iotRouter,
   },
 ];
 
