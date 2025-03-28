@@ -32,8 +32,8 @@ export const registerEmail = (payload) => {
 };
 
 export const accountApprovalEmail = (payload) => {
-    const subject = "Kilimboga Account Approved";
-    const body = `<!DOCTYPE html>
+  const subject = "Kilimboga Account Approved";
+  const body = `<!DOCTYPE html>
   <html>
   <head>
   <style>
@@ -73,5 +73,67 @@ export const accountApprovalEmail = (payload) => {
   </div>
   </body>
   </html>`;
-    return { subject, body };
-  };
+  return { subject, body };
+};
+
+export const actionRequiredEmail = (name, actions) => {
+  const subject = "Kilimboga IoT Alert: Action Required 🚨";
+  const body = `
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {font-family: 'Inter', Arial, sans-serif;background-color: #f4f7fa;margin: 0;padding: 20px;line-height: 1.6;
+        }
+        .container {background-color: #ffffff;border-radius: 12px;box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);max-width: 600px;margin: 0 auto;overflow: hidden;
+        }.header {background-color: #ff6b6b;color: white;padding: 20px;text-align: center;
+        }
+        .header h2 {margin: 0;font-size: 24px;
+        }
+        .content {padding: 25px;
+        }
+        .alert-section {background-color: #fff5f5;border-left: 5px solid #ff6b6b;padding: 15px;margin-bottom: 20px;
+        }
+        .actions-list {list-style: none;padding: 0;
+        }
+        .actions-list li {background-color: #f9f9f9;border-radius: 6px;padding: 12px 15px;margin-bottom: 10px;display: flex;align-items: center;box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        .actions-list li::before {content: '⚠️';margin-right: 10px;font-size: 20px;
+        }
+        .footer {background-color: #f1f3f5;padding: 15px;text-align: center;color: #666;font-size: 14px;
+        }
+        .logo {max-width: 150px;margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>🚜 Kilimboga IoT Alert</h2>
+        </div>
+        
+        <div class="content">
+            <p>Hello <b>${name}</b>,</p>
+            
+            <div class="alert-section">
+                <p><strong>Important:</strong> Our IoT monitoring system has detected critical conditions in your greenhouse.</p>
+            </div>
+
+            <p>The following actions are Being taken:</p>
+            
+            <ul class="actions-list">
+                ${actions.map((action) => `<li>${action}</li>`).join("")}
+            </ul>
+        </div>
+
+        <div class="footer">
+            <p>© 2025 Kilimboga Technologies | Smart Farming Solutions</p>
+            <p>Need help? Contact our support team</p>
+        </div>
+    </div>
+</body>
+</html>
+`;
+  return { subject, body };
+};

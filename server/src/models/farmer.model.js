@@ -21,6 +21,12 @@ const greenHouseSchema = mongoose.Schema(
       required: true,
       trim: true,
     },
+    farmId: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
     plant: {
       type: String,
       required: true,
@@ -50,5 +56,10 @@ const greenHouseSchema = mongoose.Schema(
     timestamps: true,
   }
 );
+
+greenHouseSchema.statics.isCodeTaken = async function (farmId) {
+  const farm = await this.findOne({ farmId });
+  return !!farm;
+};
 
 export const greenHouseModel = mongoose.model("Green", greenHouseSchema);
