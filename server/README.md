@@ -240,8 +240,7 @@ url: {{base_url}}/api/v1/farmer/predict?type=pest
 - **_request_body:_** (form data)
 
 ```json
-{ "farmId": "X5QK8",
-  "image": "image" }
+{ "farmId": "X5QK8", "image": "image" }
 ```
 
 > > **example response**
@@ -296,21 +295,48 @@ url: {{base_url}}/api/v1/farmer/predict?type=pest
   }
   ```
 
-  > ## Connect farmer to expert
-  >
-  > > **request**
+## Products
 
-- **_url_**: `{{base_url}}/api/v1/farmer/connect`
-- **_method:_** `POST`
+> > **request**
+
+- **_url_**: `{{base_url}}/api/v1/farmer/products`
+- **_method:_** `GET`
 - **_headers:_**
 
   - Authorization: Bearer **token**
 
-- **_request_body:_**
+- **_Optional query parameters:_**
 
-```json
-{ "imageUrl": "image url", "id": "the expert id" }
-```
+  | Parameter |  Type  | options                                       |
+  | :-------: | :----: | :-------------------------------------------- |
+  | category  | string | "fertilizers", "seeds", "tools", "pesticides" |
+  |   page    |  int   | ie 1                                          |
+  |  perPage  |  int   | ie 10                                         |
+
+> > **example response**
+
+- ```json
+  {
+    "totalProducts": 4,
+    "currentPage": 1,
+    "totalPages": 1,
+    "products": [
+      {
+        "_id": "67ea91a1a14e9f9b37adeee8",
+        "title": "\"Cabages\"",
+        "description": "These are cabage seeds",
+        "category": "tools",
+        "price": 1,
+        "quantity": 5,
+        "vendorId": "67dedfaccb902e8624c91e68",
+        "imageUrl": "https://res.cloudinary.com/dqrw1zi7d/image/upload/v1743425952/kilimboga/msnz1a6v5uvwftof8ltd.jpg",
+        "createdAt": "2025-03-31T12:59:13.269Z",
+        "updatedAt": "2025-03-31T12:59:13.269Z",
+        "__v": 0
+      },
+    ]
+  }
+  ```
 
 # Vendor
 
