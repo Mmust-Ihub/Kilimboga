@@ -10,7 +10,6 @@ import { greenHouseModel } from "../models/farmer.model.js";
 import AIModel from "../helpers/AIModel.js";
 import formatPrompt from "../utils/formatPrompt.js";
 import { ApiError } from "../utils/APiError.js";
-import { userModel } from "../models/user.model.js";
 import farmerService from "../services/farmer.service.js";
 import db from "../helpers/firebase.js";
 import config from "../config/config.js";
@@ -41,7 +40,7 @@ const addGreenHouse = catchAsync(async (req, res) => {
   }
   await greenHouseModel.create({ ...req.body, farmId, farmerId: req.user.id });
   return res
-    .status(httpStatus.OK)
+    .status(httpStatus.CREATED)
     .json({ status: "success", message: "farm added successfully" });
 });
 
@@ -65,7 +64,7 @@ const getGreenHouses = catchAsync(async (req, res) => {
 });
 
 const predict = catchAsync(async (req, res) => {
-  const { location } = await userModel.findById(req.user.id);
+  const { location } = await greenHouseModel.findOne({farmId: req.body.farmId})
   const nearbyExperts = await getNearbyExperts(location);
   if (req.query.type === "pest") {
     let response = await farmerService.predictPest(req.files[0]);

@@ -45,7 +45,7 @@
 
 > > **response**
 
-- **_status code_**: `200`
+- **_status code_**: `201`
 - **_response body_**:
 
 - ```json
@@ -240,7 +240,8 @@ url: {{base_url}}/api/v1/farmer/predict?type=pest
 - **_request_body:_** (form data)
 
 ```json
-{ "image": "image" }
+{ "farmId": "X5QK8",
+  "image": "image" }
 ```
 
 > > **example response**

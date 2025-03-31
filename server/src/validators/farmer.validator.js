@@ -15,6 +15,9 @@ const predictSchema = {
   query: joi.object().keys({
     type: joi.string().valid("pest", "disease").required()
   }),
+  body: joi.object().keys({
+    farmId: joi.string().required(),
+  })
 };
 
 const connect = {
