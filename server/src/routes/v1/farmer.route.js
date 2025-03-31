@@ -10,6 +10,6 @@ farmerRouter.get("/stats", authenticate, farmerController.farmerStats)
 farmerRouter.post("/green-house", validate(farmerValidator.AddGreenHouseSchema),  authenticate, farmerController.addGreenHouse)
 farmerRouter.get("/green-house",  authenticate, farmerController.getGreenHouses)
 farmerRouter.post("/predict", validate(farmerValidator.predictSchema), authenticate, farmerController.predict)
-farmerRouter.post("/connect", validate(farmerValidator.connect), authenticate, farmerController.connectFarmer)
+farmerRouter.get("/products", validate(farmerValidator.products), authenticate, farmerController.getProducts)
 
 export default farmerRouter

@@ -27,4 +27,10 @@ const connect = {
   })
 }
 
-export default { AddGreenHouseSchema, predictSchema, connect };
+const products = {
+  query: joi.object().keys({
+    category: joi.string().valid("fertilizers", "seeds", "tools", "pesticides").optional()
+  })
+}
+
+export default { AddGreenHouseSchema, predictSchema, connect, products };
