@@ -51,9 +51,9 @@ const login = catchAsync(async (req, res) => {
     throw new ApiError(httpStatus.UNAUTHORIZED, "Please verify your account.");
   }
 
-  // if(user.isSpecial && !user.isApproved){
-  //   throw new ApiError(httpStatus.UNAUTHORIZED, "You account is waiting for approval.");
-  // }
+  if(user.isSpecial && !user.isApproved){
+    throw new ApiError(httpStatus.UNAUTHORIZED, "You account is waiting for approval.");
+  }
   const token = await generateAccessToken({
     id: user.id,
     email: email,
@@ -61,7 +61,7 @@ const login = catchAsync(async (req, res) => {
   });
   return res
     .status(200)
-    .json({ status: "success", token: token, user: { firstName: user.firstName, lastName: user.lastName, email: email, role: user.role} });
+    .json({ status: "success", token: token, user: { _id: user.id, firstName: user.firstName, lastName: user.lastName, email: email, role: user.role, phoneNumber: user.phoneNumber} });
 });
 
 export default { registerUser, verifyAccount, login };

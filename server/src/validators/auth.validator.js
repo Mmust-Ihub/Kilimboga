@@ -10,6 +10,7 @@ const registerUserSchema = {
     longitude: joi.string().required(),
     latitude: joi.string().required(),
     isSpecial: joi.boolean().default(false),
+    role: joi.string().valid("admin", "expert", "vendor", "farmer").default("farmer")
   }),
 };
 

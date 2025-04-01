@@ -39,6 +39,34 @@ const envVarsSchema = joi
     CLOUDINARY_CLOUD_NAME: joi.string().required().description("Cloudinary cloud name"),
     CLOUDINARY_API_KEY: joi.string().required().description("Cloudinary api key"),
     CLOUDINARY_API_SECRET: joi.string().required().description("Cloudinary api secret"),
+    // gemini
+    GEMINI_API_KEY: joi.string().required().description("Gemini api key"),
+    GEMINI_MODEL: joi.string().required().description("Gemini model"),
+    // vet
+    MAX_VET_DISTANCE: joi.string().required().description("The maximum veterinary"),
+    MAX_VET_LIMIT: joi.string().required().description("The maximum veterinary limit"),
+    // mpesa
+    MPESA_BASE_URL: joi.string().required().description("Mpesa base url"),
+    MPESA_CONSUMER_KEY: joi.string().required().description("Mpesa consumer key"),
+    MPESA_CONSUMER_SECRET: joi.string().required().description("Mpesa consumer secret"),
+    MPESA_PASS_KEY: joi.string().required().description("Mpesa pass key"),
+    MPESA_SHORT_CODE: joi.string().required().description("Mpesa shortcode"),
+    MPESA_TRANSACTION_TYPE: joi.string().required().description("Mpesa transaction type"),
+    MPESA_CALLBACK_BASE_URL: joi.string().required().description("Mpesa callback base url"),
+    // firebase
+    FIREBASE_TYPE: joi.string().required().description("Firebase type"),
+    FIREBASE_PROJECT_ID: joi.string().required().description("Firebase project id"),
+    FIREBASE_PRIVATE_KEY_ID: joi.string().required().description("Firebase private key id"),
+    FIREBASE_PRIVATE_KEY: joi.string().required().description("Firebase private key"),
+    FIREBASE_CLIENT_EMAIL: joi.string().required().description("Firebase client email"),
+    FIREBASE_CLIENT_ID: joi.string().required().description("Firebase client id"),
+    FIREBASE_AUTH_URI: joi.string().required().description("Firebase auth uri"),
+    FIREBASE_TOKEN_URI: joi.string().required().description("Firebase token uri"),
+    FIREBASE_AUTH_PROVIDER_X509_CERT_URL: joi.string().required().description("Firebase auth provider cert url"),
+    FIREBASE_CLIENT_X509_CERT_URL: joi.string().required().description("Firebase client cert url"),
+    FIREBASE_UNIVERSE_DOMAIN: joi.string().required().description("Firebase universe domain"),
+    FIREBASE_EXPERT_COLL: joi.string().required().description("Firebase expert collection"),
+    FIREBASE_IOT_COLL: joi.string().required().description("Firebase iot collection"),
   })
   .unknown();
 
@@ -83,4 +111,39 @@ export default {
     api_key: envVars.CLOUDINARY_API_KEY,
     api_secret: envVars.CLOUDINARY_API_SECRET
   },
+  gemini: {
+    api_key: envVars.GEMINI_API_KEY,
+    model: envVars.GEMINI_MODEL
+  },
+  vet: {
+    distance: envVars.MAX_VET_DISTANCE,
+    limit: envVars.MAX_VET_LIMIT,
+    coll: envVars.FIREBASE_COLL
+  },
+  mpesa: {
+    base_url: envVars.MPESA_BASE_URL,
+    consumer_key: envVars.MPESA_CONSUMER_KEY,
+    consumer_secret: envVars.MPESA_CONSUMER_SECRET,
+    pass_key: envVars.MPESA_PASS_KEY,
+    short_code: envVars.MPESA_SHORT_CODE,
+    transaction_type: envVars.MPESA_TRANSACTION_TYPE,
+    callback_url: envVars.MPESA_CALLBACK_BASE_URL,
+  },
+  firebase: {
+    expert_coll: envVars.FIREBASE_EXPERT_COLL,
+    iot_coll: envVars.FIREBASE_IOT_COLL,
+    cfg: {
+      type: envVars.FIREBASE_TYPE,
+      project_id: envVars.FIREBASE_PROJECT_ID,
+      private_key_id: envVars.FIREBASE_PRIVATE_KEY_ID,
+      private_key: envVars.FIREBASE_PRIVATE_KEY,
+      client_email: envVars.FIREBASE_CLIENT_EMAIL,
+      client_id: envVars.FIREBASE_CLIENT_ID,
+      auth_uri: envVars.FIREBASE_AUTH_URI,
+      token_uri: envVars.FIREBASE_TOKEN_URI,
+      auth_provider_x509_cert_url: envVars.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
+      client_x509_cert_url: envVars.FIREBASE_CLIENT_X509_CERT_URL,
+      universe_domain: envVars.FIREBASE_UNIVERSE_DOMAIN,
+    }
+  }
 };
