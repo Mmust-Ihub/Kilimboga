@@ -2,11 +2,12 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from "react-router";
 import './index.css'
-import Dashboard from './components/Dashboard.jsx'
-import Products from './components/Products.jsx'
-import Orders from './components/Orders.jsx'
-import SignUp from './components/SignUp.jsx'
-import Login from './components/Login.jsx'
+import Dashboard from './mainComponents/Dashboard.jsx'
+import Products from './subComponents/Products.jsx'
+import Orders from './subComponents/Orders.jsx'
+import SignUp from './mainComponents/SignUp.jsx'
+import Login from './mainComponents/Login.jsx'
+import Admin from './mainComponents/Admin.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -17,6 +18,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/login" element={<Login />} />
         <Route path="/products" element={<Products />} />
         <Route path="/orders" element={<Orders />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

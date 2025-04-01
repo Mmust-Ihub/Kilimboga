@@ -1,4 +1,4 @@
-import Navbar from './Navbar'
+import Navbar from '../mainComponents/Navbar.jsx'
 import EditProductForm from './EditProductForm'
 import validate from '../validation/schema.js'
 import { useState, useEffect } from 'react'
@@ -93,7 +93,7 @@ function Products(){
 
     return (
         <>
-            <Navbar />
+            <Navbar user={'user'} />
             <div className='mx-8 lg:mx-25 flex justify-between items-center'>
                 <h1 className="font-semibold text-lg" >Products</h1>
                 <div>

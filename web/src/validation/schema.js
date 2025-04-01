@@ -28,10 +28,27 @@ function validate(schema, data) {
             return productQuantity.validate(data)
         case 'productPrice':
             return productPrice.validate(data)
+        case 'otp':
+            return otp.validate(data)
         default:
             return { error: 'Invalid schema' }
     }
 }
+
+const otp = Joi.object({
+    otp: Joi.number()
+        .integer()
+        .min(100000)
+        .max(999999)
+        .required()
+        .messages({
+            'number.integer': 'OTP must be a 6-digit number.',
+            'number.min': 'OTP must be at least 6 digits long.',
+            'number.max': 'OTP must not exceed 6 digits.',
+            'number.empty': 'OTP cannot be empty.',
+            'any.required': 'OTP is required.',
+        }),
+})
 
 const firstName = Joi.object({
     firstName: Joi.string()

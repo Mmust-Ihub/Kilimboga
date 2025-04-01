@@ -9,7 +9,7 @@ function App() {
 
   return (
     <>
-      <Navbar />
+      <Navbar user={'user'} />
       <div className='mx-8 lg:mx-25'>
 
         <h1 className='text-2xl font-bold text-center lg:text-left'>Your total revenue</h1>

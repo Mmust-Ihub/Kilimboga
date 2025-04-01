@@ -1,10 +1,10 @@
-import Navbar from './Navbar'
+import Navbar from '../mainComponents/Navbar'
 import { useState } from 'react'
 
 function Orders(){
     return (
         <>
-        <Navbar />
+        <Navbar user={'user'} />
         <div className='mx-8 lg:mx-25 flex justify-between items-center'>
             <h1 className="font-semibold text-lg" >Orders</h1>
         </div>
