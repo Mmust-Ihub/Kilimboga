@@ -36,16 +36,15 @@ function validate(schema, data) {
 }
 
 const otp = Joi.object({
-    otp: Joi.number()
-        .integer()
-        .min(100000)
-        .max(999999)
+    otp: Joi.string()
+        .alphanum()
+        .min(5)
+        .max(5)
         .required()
         .messages({
-            'number.integer': 'OTP must be a 6-digit number.',
-            'number.min': 'OTP must be at least 6 digits long.',
-            'number.max': 'OTP must not exceed 6 digits.',
-            'number.empty': 'OTP cannot be empty.',
+            'string.alphanum': 'OTP must only contain letters and numbers.',
+            'string.min': 'OTP must be at least 6 characters long.',
+            'string.max': 'OTP must not exceed 6 characters.',
             'any.required': 'OTP is required.',
         }),
 })

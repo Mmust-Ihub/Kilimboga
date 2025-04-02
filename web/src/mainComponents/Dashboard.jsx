@@ -1,11 +1,27 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { GrMoney, GrCart } from "react-icons/gr";
 import { FaArrowTrendUp } from "react-icons/fa6";
+import toast, { Toaster } from 'react-hot-toast';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { LuCrown } from "react-icons/lu";
 import Navbar from './Navbar.jsx'
+import Database from '../js/db.js';
+
+const db = new Database()
 
 function App() {
+  const [vendorStats, setVendorStats] = useState({})
+  const [token, setToken] = useState(JSON.parse(localStorage.getItem('token')))
+
+  useEffect(()=>{
+    const response = db.vendorStats(token)
+
+    if(!response.status){
+      toast.error(response.message)
+    }
+
+    setVendorStats(response.stats)
+  },[])
 
   return (
     <>
@@ -93,6 +109,7 @@ function App() {
           />
         </div>
       </div>
+      <Toaster />
     </>
    
   )

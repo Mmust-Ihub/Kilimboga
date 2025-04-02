@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import validate from '../validation/schema.js'
+import Database from '../js/db.js';
+
+const db = new Database();
 
 function SignUp() {
     const [formData, setFormData] = useState({
@@ -12,9 +15,24 @@ function SignUp() {
         longitude: '',
         latitude: '',
         isSpecial: true,
-        documents: null,
+        documents: [],
         role: 'vendor'
     });
+
+    useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position) => {
+                setFormData({
+                    ...formData,
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                } )
+            })
+        } else {
+            console.error('Geolocation is not supported by this browser.');
+        }
+    },[])
+
     const [isLoading, setIsLoading] = useState(false);
     const [otp, setOtp] = useState('');
     const [showOtp, setShowOtp] = useState(false);
@@ -44,13 +62,14 @@ function SignUp() {
 
         setFormData({
             ...formData,
-            documents: e.target.files[0],
+            documents: [e.target.files[0]],
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
+
         // if (navigator.geolocation) {
         //     navigator.geolocation.getCurrentPosition(
         //         (position) => {
@@ -68,7 +87,6 @@ function SignUp() {
         //     console.error('Geolocation is not supported by this browser.');
         // }
 
-        // DB function to create vendor
         let {value, error} = validate('signUp', {
             firstName: formData.firstName,
             lastName: formData.lastName,
@@ -83,25 +101,34 @@ function SignUp() {
             return
         }
 
-        if (formData.documents === null) {
+        if (formData.documents.length < 1) {
             toast.error('Supporting document required')
             return
-        } else if (formData.documents.type !== 'application/pdf') {
+        } else if (formData.documents[0].type !== 'application/pdf') {
             toast.error('Document should be in PDF format')
             return
-        }else if(formData.documents.size > 5000000) {
+        }else if(formData.documents[0].size > 5000000) {
             toast.error('Document size should not exceed 5MB')
             return
         } 
 
         console.log(formData);
+
+        const {status, message} = await db.register(formData)
+
         setIsLoading(false);
+
+        if (!status) {
+            toast.error(message)
+            return
+        }
+        toast.success(message)
         toast('OTP sent to your email!')
         setShowSignUp(false);
         setShowOtp(true);
     };
 
-    const handleOtpSubmit = (e) => {
+    const handleOtpSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
 
@@ -115,10 +142,16 @@ function SignUp() {
             return
         }
 
-        // DB function to verify OTP
+        const {status, message} = await db.verify(otp)
 
         setIsLoading(false);
-        toast.success('OTP verified successfully!')
+
+        if (!status) {
+            toast.error(message)
+            return
+        }
+
+        toast.success(message)
         window.location.href = '/login'
     }
 

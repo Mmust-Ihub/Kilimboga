@@ -63,7 +63,7 @@ function AdminVendors(){
             name: '',
             cell: row => (
                 <button
-                    className='bg-gray-500 cursor-pointer text-white rounded-full px-4 py-2'
+                    className='bg-gray-500 cursor-pointer text-white rounded-full px-4 py-2 text-base'
                     onClick={() => {
                         setFormData({
                             firstName: row.firstName,
@@ -153,7 +153,7 @@ function AdminVendors(){
                     borderRightStyle: 'solid',
                     borderRightWidth: '1px',
                     borderRightColor: '#D1D5DB',
-                    fontSize: '14px',
+                    fontSize: '16px',
                     paddingTop: '10px',
                     paddingBottom: '10px',
                 },
@@ -167,7 +167,7 @@ function AdminVendors(){
                     borderRightColor: '#D1D5DB',
                     paddingTop: '15px',
                     paddingBottom: '15px',
-                    fontSize: '14px',
+                    fontSize: '16px',
                 },
             },
         },
@@ -209,9 +209,9 @@ function AdminVendors(){
         <>
             {showTable ? (
                 
-                    <div className="admin-vendors">
+                    <div className="px-10 py-3 bg-white">
                         <DataTable
-                            className='shadow-lg'
+                            className=''
                             title={'Vendors'}
                             columns={columns}
                             data={tdata}
@@ -228,8 +228,10 @@ function AdminVendors(){
             ):(null)}
 
             {showForm ? (
-                <div className="mt-5 py-10 px-7 rounded shadow-xl">
-                    <button className='mb-3 rounded-full ring-1 ring-gray-300 cursor-pointer p-1' onClick={showTableFn}><IoMdArrowRoundBack /></button>
+                <>
+                <button className='mt-3 ml-10 mb-3 rounded-full ring-1 ring-gray-300 cursor-pointer p-1' onClick={showTableFn}><IoMdArrowRoundBack /></button>
+                
+                <div className="mt-3 mx-10 ring-1 ring-gray-300 p-5 rounded">
                     <h3 className='text-base font-semibold'>Documents</h3>
                     <ol className='mb-3'>
                         <li><a href={formData.documents} className='text-sm cursor-pointer text-blue-600'>KRA certificate</a></li>
@@ -302,6 +304,9 @@ function AdminVendors(){
                         </div>
                     </div>
                 </div>
+                </>
+
+                
             ):(null)}
         </>
     );

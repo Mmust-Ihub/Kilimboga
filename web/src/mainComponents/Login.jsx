@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import validate from '../validation/schema.js'
+import Database from '../js/db.js';
+
+const db = new Database();
 
 function Login() {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -27,7 +31,10 @@ function Login() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // DB function to login vendor
+        console.log(formData)
+
+        setIsLoading(true);
+
         let {value, error} = validate('login', formData)
 
         if (error) {
@@ -36,7 +43,25 @@ function Login() {
             return
         }
 
-        console.log(formData);
+        const res = db.login(formData)
+
+        setIsLoading(false);
+
+        if (!res.status) {
+            toast.error(res.message)
+            return
+        }
+
+        toast.success(res.message)
+
+        if(res.user.role === 'admin'){
+            window.location.href = '/admin'
+        }else if(res.user.role === 'vendor'){
+            window.location.href = '/'
+        }else if(res.user.role === 'farmer'){
+            toast.error('You are not allowed to login as a farmer')
+            return
+        }
     };
 
     return (
@@ -74,7 +99,7 @@ function Login() {
                     </div>      
                 </form>
                 <button type="submit" onClick={handleSubmit} className="w-full cursor-pointer mt-3 bg-gray-800 text-white py-2 rounded">
-                    Login
+                    {isLoading ? "Loading..." : "Login"}
                 </button>
                 <h1 className='mt-3 text-gray-400'>Don't have an account? Go to <a href="/signUp" className='underline underline-offset-8'>Sign up</a> </h1>
             </div>

@@ -209,9 +209,9 @@ function AdminFarmers(){
         <>
             {showTable ? (
                 
-                    <div className="">
+                    <div className="px-10 py-3 bg-white">
                         <DataTable
-                            className='shadow-lg'
+                            className=''
                             title={'Farmers'}
                             columns={columns}
                             data={tdata}
@@ -228,9 +228,9 @@ function AdminFarmers(){
             ):(null)}
 
             {showForm ? (
-                <div className="mt-5 py-10 px-7 rounded shadow-xl">
-                    <button className='mb-3 rounded-full ring-1 ring-gray-300 cursor-pointer p-1' onClick={showTableFn}><IoMdArrowRoundBack /></button>
-
+                <>
+                <button className='mt-3 ml-10 mb-3 rounded-full ring-1 ring-gray-300 cursor-pointer p-1' onClick={showTableFn}><IoMdArrowRoundBack /></button>
+                <div className="mt-3 mx-10 ring-1 ring-gray-300 p-5 rounded">
                     {/* <h3 className='text-base font-semibold'>Documents</h3>
                     <ol className='mb-3'>
                         <li><a href={formData.documents} className='text-sm cursor-pointer text-blue-600'>KRA certificate</a></li>
@@ -302,6 +302,8 @@ function AdminFarmers(){
                         </div>
                     </div>
                 </div>
+                </>
+                
             ):(null)}
         </>
     );
