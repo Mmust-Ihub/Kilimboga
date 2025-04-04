@@ -10,10 +10,11 @@ import Login from './mainComponents/Login.jsx'
 import Admin from './mainComponents/Admin.jsx'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  // <StrictMode>
      <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         <Route path="/products" element={<Products />} />
@@ -21,5 +22,5 @@ createRoot(document.getElementById('root')).render(
         <Route path="/admin" element={<Admin />} />
       </Routes>
     </BrowserRouter>
-  </StrictMode>
+  // </StrictMode>
 )

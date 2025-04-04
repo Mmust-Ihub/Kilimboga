@@ -183,12 +183,10 @@ const loginSchema = Joi.object({
 
 const productSchema = Joi.object({
     productName: Joi.string()
-        .alphanum()
         .min(3)
         .max(30)
         .required()
         .messages({
-            'string.alphanum': 'Product name must only contain letters and numbers.',
             'string.min': 'Product name must be at least 3 characters long.',
             'string.max': 'Product name must not exceed 30 characters.',
             'string.empty': 'Product name cannot be empty.',
@@ -196,12 +194,10 @@ const productSchema = Joi.object({
         }),
 
     productDescription: Joi.string()
-        .alphanum()
-        .min(3)
+        .min(100)
         .max(100)
         .required()
         .messages({
-            'string.alphanum': 'Product description must only contain letters and numbers.',
             'string.min': 'Product description must be at least 3 characters long.',
             'string.max': 'Product description must not exceed 100 characters.',
             'string.empty': 'Product description cannot be empty.',
@@ -209,23 +205,14 @@ const productSchema = Joi.object({
         }),
 
     productCategory: Joi.string()
-        .alphanum()
         .min(3)
         .max(100)
         .required()
         .messages({
-            'string.alphanum': 'Product category must only contain letters and numbers.',
             'string.min': 'Product category must be at least 3 characters long.',
             'string.max': 'Product category must not exceed 100 characters.',
             'string.empty': 'Product category cannot be empty.',
             'any.required': 'Product category is required.',
-        }),
-    
-    productImage: Joi.string()
-        .required()
-        .messages({
-            'string.empty': 'Product image cannot be empty.',
-            'any.required': 'Product image is required.',
         }),
 
     productQuantity: Joi.number()
@@ -251,16 +238,14 @@ const productSchema = Joi.object({
     .with('productName', 'productDescription')
     .with('productQuantity', 'productPrice') 
     .with('productCategory', 'productName')
-    .with('productImage', 'productDescription')
+    .with('productName', 'productDescription')
 
 const productName = Joi.object({
     productName: Joi.string()
-    .alphanum()
     .min(3)
     .max(30)
     .required()
     .messages({
-        'string.alphanum': 'Product name must only contain letters and numbers.',
         'string.min': 'Product name must be at least 3 characters long.',
         'string.max': 'Product name must not exceed 30 characters.',
         'string.empty': 'Product name cannot be empty.',
@@ -270,12 +255,10 @@ const productName = Joi.object({
 
 const productDescription = Joi.object({
     productDescription: Joi.string()
-        .alphanum()
-        .min(3)
+        .min(100)
         .max(100)
         .required()
         .messages({
-            'string.alphanum': 'Product description must only contain letters and numbers.',
             'string.min': 'Product description must be at least 3 characters long.',
             'string.max': 'Product description must not exceed 100 characters.',
             'string.empty': 'Product description cannot be empty.',
@@ -285,25 +268,14 @@ const productDescription = Joi.object({
   
 const productCategory = Joi.object({
     productCategory: Joi.string()
-        .alphanum()
         .min(3)
         .max(100)
         .required()
         .messages({
-            'string.alphanum': 'Product category must only contain letters and numbers.',
             'string.min': 'Product category must be at least 3 characters long.',
             'string.max': 'Product category must not exceed 100 characters.',
             'string.empty': 'Product category cannot be empty.',
             'any.required': 'Product category is required.',
-        })
-})
-
-const productImage = Joi.object({
-    productImage: Joi.string()
-        .required()
-        .messages({
-            'string.empty': 'Product image cannot be empty.',
-            'any.required': 'Product image is required.',
         })
 })
 

@@ -1,7 +1,32 @@
 import Navbar from '../mainComponents/Navbar'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import {ClipLoader} from 'react-spinners'
+import toast, { Toaster } from 'react-hot-toast';
+import Database from '../js/db.js';
+
+const db = new Database()
 
 function Orders(){
+    const [token, setToken] = useState(JSON.parse(localStorage.getItem('token')))
+    const [orders, setOrders] = useState([])
+
+    useEffect(()=>{
+        async function getData() {
+            const response = await db.getOrders(token, "pending");
+            if (!response.status) {
+                toast.error(response.message);
+            } else {
+                console.log(response.data);
+                // setProducts(response.data);
+            }
+        }
+        toast.promise(getData(), {
+            loading: 'Fetching orders...',
+            success: 'Orders fetched successfully',
+            error: 'Error when fetching orders',
+          });
+      },[])
+
     return (
         <>
         <Navbar user={'user'} />
@@ -73,6 +98,7 @@ function Orders(){
                 <p>0706518167</p>
 
             </div>
+            <Toaster />
         </div>
         </>
     )

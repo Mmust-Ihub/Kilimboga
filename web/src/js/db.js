@@ -132,24 +132,26 @@ class Database {
         try {
             const res = await fetch(`${this.baseUrl}/api/v1/vendor/stats`, {
                 method: 'GET',
-                headers: `Authorization: Bearer ${token}`
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             });
     
             const resData = await res.json();
 
             console.log(resData)
     
-            response = {
+            let response = {
                 status: true,
                 message: "Data fetched successfully",
-                stats: resData,
+                data: resData,
             }
     
             return response
         } catch (err) {
             console.log(err);
     
-            response = {
+            let response = {
                 status: false,
                 message: "Error when fetching data",
             }
@@ -162,7 +164,9 @@ class Database {
         try {
             const res = await fetch(`${this.baseUrl}/api/v1/vendor/profile`, {
                 method: 'GET',
-                headers: `Authorization: Bearer ${token}`
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             });
     
             const resData = await res.json();
@@ -195,18 +199,15 @@ class Database {
         formData.append('description', product.productDescription);
         formData.append('price', product.productPrice);
         formData.append('category', product.productCategory);
-        formData.append('image', product.productImage[0]);
+        formData.append('image', product.productImage);
         formData.append('quantity', product.productQuantity);
 
-        let response = {
-            status: false,
-            message: '',
-        }
-    
         try {
             const res = await fetch(`${this.baseUrl}/api/v1/vendor/product`, {
                 method: 'POST',
-                headers: `Authorization: Bearer ${token}`,
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
                 body: formData,
             });
     
@@ -214,7 +215,7 @@ class Database {
 
             console.log(resData)
     
-            response = {
+            let response = {
                 status: true,
                 message: resData.message,
             }
@@ -223,7 +224,7 @@ class Database {
         } catch (err) {
             console.log(err);
     
-            response = {
+            let response = {
                 status: false,
                 message: "Error when adding product",
             }
@@ -236,14 +237,14 @@ class Database {
         try {
             const res = await fetch(`${this.baseUrl}/api/v1/vendor/products`, {
                 method: 'GET',
-                headers: `Authorization: Bearer ${token}`
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             });
     
             const resData = await res.json();
-
-            console.log(resData)
     
-            response = {
+            let response = {
                 status: true,
                 message: "Products fetched successfully",
                 data: resData,
@@ -253,7 +254,7 @@ class Database {
         } catch (err) {
             console.log(err);
     
-            response = {
+            let response = {
                 status: false,
                 message: "Error when fetching products",
             }
@@ -262,48 +263,62 @@ class Database {
         }
     }
 
-    // async editProduct(token){
-    //     try {
-    //         const res = await fetch(`${this.baseUrl}/api/v1/vendor/product`, {
-    //             method: 'PATCH',
-    //             headers: `Authorization: Bearer ${token}`
-    //         });
+    async editProduct(token, product) {
+        const formData = new FormData();
+        formData.append('title', product.productName);
+        formData.append('description', product.productDescription);
+        formData.append('price', product.productPrice);
+        formData.append('category', product.productCategory);
+        formData.append('image', product.productImage);
+        formData.append('quantity', product.productQuantity);
     
-    //         const resData = await res.json();
-
-    //         console.log(resData)
-    
-    //         response = {
-    //             status: true,
-    //             message: "Products fetched successfully",
-    //             data: resData,
-    //         }
-    
-    //         return response
-    //     } catch (err) {
-    //         console.log(err);
-    
-    //         response = {
-    //             status: false,
-    //             message: "Error when fetching products",
-    //         }
-    
-    //         return response;
-    //     }
-    // }
-
-    async deleteProduct(token, id){
         try {
-            const res = await fetch(`${this.baseUrl}/api/v1/vendor/product?id=${id}`, {
-                method: 'DELETE',
-                headers: `Authorization: Bearer ${token}`
+            const res = await fetch(`${this.baseUrl}/api/v1/vendor/product`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: formData,
             });
+    
+            if (res.status !== 201) {
+                throw new Error('Failed to update the product');
+            }
     
             const resData = await res.json();
 
-            console.log(resData)
+            console.log(resData);
     
-            response = {
+            return {
+                status: true,
+                message: 'Product updated successfully',
+                data: resData,
+            };
+        } catch (err) {
+            console.error(err);
+    
+            return {
+                status: false,
+                message: err.message || 'Error when updating product',
+            };
+        }
+    }
+
+    async deleteProduct(token, id){
+        try {
+            console.log(id)
+            const res = await fetch(`${this.baseUrl}/api/v1/vendor/product?id=${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if(res.status !== 204){
+                throw new Error("Error when deleting product")
+            }
+
+            let response = {
                 status: true,
                 message: "Product deleted successfully",
             }
@@ -312,7 +327,7 @@ class Database {
         } catch (err) {
             console.log(err);
     
-            response = {
+            let response = {
                 status: false,
                 message: "Error when deleting product",
             }
@@ -326,29 +341,27 @@ class Database {
         try {
             const res = await fetch(`${this.baseUrl}/api/v1/vendor/orders?state=${state}`, {
                 method: 'GET',
-                headers: `Authorization: Bearer ${token}`
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             });
     
             const resData = await res.json();
 
-            console.log(resData)
+            // console.log(resData)
     
-            response = {
+            return {
                 status: true,
                 message: `${state} orders fetched successfully`,
                 data: resData,
             }
-    
-            return response
         } catch (err) {
             console.log(err);
-    
-            response = {
+
+            return {
                 status: false,
                 message: `Error when fetching ${state} orders`,
             }
-    
-            return response;
         }
     }
 }

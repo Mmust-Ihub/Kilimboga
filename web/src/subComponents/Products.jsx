@@ -3,17 +3,24 @@ import EditProductForm from './EditProductForm'
 import validate from '../validation/schema.js'
 import { useState, useEffect } from 'react'
 import toast, { Toaster } from 'react-hot-toast';
+import Database from '../js/db.js';
+import {ClipLoader} from 'react-spinners'
+
+const db = new Database()
 
 function Products(){
-    const [viewProducts, setViewProducts] = useState(true) 
+    const [viewProducts, setViewProducts] = useState(false) 
     const [addProducts, setAddProducts] = useState(false)
     const [editProducts, setEditProducts] = useState(false)
+    const [products, setProducts] = useState([])
+    const [token, setToken] = useState(JSON.parse(localStorage.getItem('token')))
+    const [refresh, setRefresh] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     const [formData, setFormData] = useState({
         productName: '',
         productDescription: '',
         productCategory: '',
-        productImage: '',
         productQuantity: 0,
         productPrice: 0
     });
@@ -27,6 +34,29 @@ function Products(){
         productPrice: 0,
         id: ''
     });
+
+    useEffect(()=>{
+        async function getData() {
+            const response = await db.getProducts(token);
+            if (!response.status) {
+                toast.error(response.message);
+            } else {
+                setProducts(response.data);
+
+                setEditProducts(false)
+                setAddProducts(false)
+                setViewProducts(true)
+
+                setRefresh(false)
+            }
+        }
+        // getData();
+        toast.promise(getData(), {
+            loading: 'Fetching products...',
+            success: 'Products fetched successfully',
+            error: 'Error when fetching products',
+          });
+      },[refresh])
 
     function showAddForm(){
         setEditProducts(false)
@@ -51,9 +81,7 @@ function Products(){
     }
 
     function showView(){
-        setEditProducts(false)
-        setAddProducts(false)
-        setViewProducts(true)
+        setRefresh(true)
     }
 
     const handleProductFormValidate = (e) => {
@@ -72,23 +100,58 @@ function Products(){
         });
     }
 
-    function handleProductFormSubmit(){
+    async function handleProductFormSubmit(){
+        setLoading(true)
+
         let {value, error} = validate('product', formData)
 
         if (error) {
+            console.log(error.details)
+            console.log(formData)
             let message = error.details[0].message.replace(/"/g, '');
             toast.error(message)
+            setLoading(false)
             return
         }
-        if(document.getElementById('productImage').files.length < 1){
+
+        if(!document.getElementById('productImage').files.length > 0){
             toast.error('Product Image is required')
+            setLoading(false)
+            return
+        }else if(document.getElementById('productImage').files[0].size > 2000000){
+            toast.error('Product Image size should be less than 2MB')
+            setLoading(false)
             return
         }
 
         // To do: Upload image fn
         // To do: Upload to db fn
+        const payload = {
+            ...formData,
+            productImage: document.getElementById('productImage').files[0]
+        }
 
-        console.log(formData);
+        try {
+            const response = await db.addProduct(token, payload); // Await the API call
+            if (!response.status) {
+                toast.error(response.message);
+            } else {
+                toast.success(response.message);
+                setFormData({
+                    productName: '',
+                    productDescription: '',
+                    productCategory: 'fertilisers',
+                    productImage: '',
+                    productQuantity: 0,
+                    productPrice: 0,
+                });
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error('An error occurred while adding the product.');
+        } finally {
+            setLoading(false); // Stop loading after the process is complete
+        }
     }
 
     return (
@@ -102,34 +165,35 @@ function Products(){
                 </div>
             </div>
 
-           {viewProducts && ( <div className='mx-8 lg:mx-25 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-5'>
-
-                <div className="rounded shadow-xl ring-1 ring-gray-100 px-6 py-5">
-                    <img className="rounded" src="https://th.bing.com/th/id/OIP.JM1OeMRn9Kak0GEDbzig8AHaEK?w=297&h=180&c=7&r=0&o=5&dpr=1.1&pid=1.7" alt="" />
-                    <h1 className="font-bold mt-2 text-lg">Farm Up fertiliser</h1>
-                    <p className="text-gray-400 mt-2 text-sm">Fertiliser for cabbages between week 1 and 2</p>
-                    <div className="flex justify-between items-center mt-2">
-                        <div>
-                            <p className='text-gray-400 text-sm mt-2'>Price</p>
-                            <p className="font-semibold">20 KES</p>
-                        </div>
-                       <div>
-                        <p className='text-gray-400 text-sm text-left mt-2'>Quantity</p>
-                        <p className="font-semibold text-right">200</p>
-                       </div>
-                    </div>
-                    <button className="
-                        border-1 border-gray-300
-                        mt-4 px-4 py-1
-                        w-full  
-                        cursor-pointer 
-                        text-base hover:text-white
-                        bg-gray-100 hover:bg-gray-800
-                        rounded"
-                        onClick={() => showEditForm("Farm Up fertiliser", "Fertiliser for cabbages between week 1 and 2", "Fertiliser", 20, 200, "https://th.bing.com/th/id/OIP.JM1OeMRn9Kak0GEDbzig8AHaEK?w=297&h=180&c=7&r=0&o=5&dpr=1.1&pid=1.7", "1")}>Edit</button>
+           {viewProducts ? ( 
+                <div className='mx-8 lg:mx-25 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-5'>
+                    {products.length > 0 ? 
+                        products.map((product) => (
+                            <div key={product._id} className="rounded shadow-xl ring-1 ring-gray-100 px-6 py-5">
+                                <img className="rounded h-40 w-full" src={product.imageUrl} alt="" />
+                                <h1 className="font-bold mt-2 text-lg">{product.title}</h1>
+                                <p className="text-gray-400 mt-2 text-sm">{product.description}</p>
+                                <div className="flex justify-between items-center mt-2">
+                                    <div>
+                                        <p className='text-gray-400 text-sm mt-2'>Price</p>
+                                        <p className="font-semibold">{product.price} KES</p>
+                                    </div>
+                                    <div>
+                                        <p className='text-gray-400 text-sm text-left mt-2'>Quantity</p>
+                                        <p className="font-semibold text-right">{product.quantity}</p>
+                                    </div>
+                                </div>
+                                <button
+                                    className="border-1 border-gray-300 mt-4 px-4 py-1 w-full cursor-pointer text-base hover:text-white bg-gray-100 hover:bg-gray-800 rounded"
+                                    onClick={() => showEditForm(product.title, product.description, product.category, product.price, product.quantity, product.image, product._id)}
+                                >
+                                    Edit
+                                </button>
+                            </div>
+                        )) : null
+                    }
                 </div>
-             
-            </div>)}
+            ): null}
 
             {addProducts && (
                 <div className="mx-8 lg:mx-25 mt-5 py-10 px-7 rounded shadow-xl">
@@ -176,7 +240,15 @@ function Products(){
                         </div>
                     </form>
                     <div className="flex flex-row-reverse justify-between items-center">
-                        <button onClick={handleProductFormSubmit} className="mt-5 px-6 py-1 cursor-pointer bg-green-800 hover:bg-green-700 text-white text-sm rounded">Add product</button>
+                    <button 
+                        onClick={handleProductFormSubmit} 
+                        className={`w-40 mt-5 px-6 py-1 cursor-pointer text-white text-sm rounded flex items-center justify-center ${
+                            loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-green-800 hover:bg-green-700'
+                        }`}
+                        disabled={loading}
+                    >
+                        {loading ? <ClipLoader size={20} color='#ffffff' loading={loading} speedMultiplier={1} /> : 'Add product'}
+                    </button>
                     </div>
                 </div>
             )}
@@ -190,6 +262,7 @@ function Products(){
                     qty={editFormData.productQuantity}
                     image={editFormData.productImage}
                     id={editFormData.id}
+                    showView={showView}
                 />
             )}
 

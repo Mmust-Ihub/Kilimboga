@@ -28,7 +28,7 @@ function Login() {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         console.log(formData)
@@ -38,12 +38,17 @@ function Login() {
         let {value, error} = validate('login', formData)
 
         if (error) {
+            console.log(error)
             let message = error.details[0].message.replace(/"/g, '');
             toast.error(message)
             return
+        }else{
+            console.log(value)
         }
 
-        const res = db.login(formData)
+        const res = await db.login(formData)
+
+        console.log(res)
 
         setIsLoading(false);
 
@@ -57,7 +62,7 @@ function Login() {
         if(res.user.role === 'admin'){
             window.location.href = '/admin'
         }else if(res.user.role === 'vendor'){
-            window.location.href = '/'
+            window.location.href = '/dashboard'
         }else if(res.user.role === 'farmer'){
             toast.error('You are not allowed to login as a farmer')
             return
