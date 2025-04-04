@@ -2,6 +2,7 @@ import React, { use, useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import validate from '../validation/schema.js'
 import Database from '../js/db.js';
+import {ClipLoader} from 'react-spinners'
 
 const db = new Database();
 
@@ -33,7 +34,7 @@ function SignUp() {
         }
     },[])
 
-    const [isLoading, setIsLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [otp, setOtp] = useState('');
     const [showOtp, setShowOtp] = useState(false);
     const [showSignUp, setShowSignUp] = useState(true);
@@ -68,7 +69,7 @@ function SignUp() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsLoading(true);
+        setLoading(true);
 
         // if (navigator.geolocation) {
         //     navigator.geolocation.getCurrentPosition(
@@ -116,7 +117,7 @@ function SignUp() {
 
         const {status, message} = await db.register(formData)
 
-        setIsLoading(false);
+        setLoading(false);
 
         if (!status) {
             toast.error(message)
@@ -130,7 +131,7 @@ function SignUp() {
 
     const handleOtpSubmit = async (e) => {
         e.preventDefault();
-        setIsLoading(true);
+        setLoading(true);
 
         let {value, error} = validate('otp', {
             otp: otp,
@@ -144,7 +145,7 @@ function SignUp() {
 
         const {status, message} = await db.verify(otp)
 
-        setIsLoading(false);
+        setLoading(false);
 
         if (!status) {
             toast.error(message)
@@ -157,7 +158,7 @@ function SignUp() {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-            <div className='bg-white py-10 px-10 rounded shadow-md w-3/6 flex flex-col items-center'>
+            <div className='bg-white py-10 px-8 rounded shadow-md w-3/6 flex flex-col items-center'>
                 <h2 className="text-2xl font-bold mb-8">Kilimboga Agrovet Sign Up</h2>
 
                {showSignUp && ( 
@@ -246,8 +247,18 @@ function SignUp() {
                                 <p className='error text-red-500 mt-1'></p>
                             </div>
                         </form>
-                        <button type="submit" onClick={handleSubmit} className="w-full cursor-pointer mt-3 bg-gray-800 text-white py-2 rounded">
-                            {isLoading ? 'Loading...' : 'Sign Up'}
+                        {/* <button type="submit" onClick={handleSubmit} className="w-full cursor-pointer mt-3 bg-gray-800 text-white py-2 rounded">
+                            {loading ? 'Loading...' : 'Sign Up'}
+                        </button> */}
+                        <button 
+                            type='submit'
+                            onClick={handleSubmit} 
+                            className={`w-full cursor-pointer mt-3 bg-green-800 text-white py-2 rounded flex items-center justify-center ${
+                                loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-green-800 hover:bg-green-700'
+                            }`}
+                            disabled={loading}
+                        >
+                            {loading ? <ClipLoader size={20} color='#ffffff' loading={loading} speedMultiplier={1} /> : 'Sign Up'}
                         </button>
                     </>
                 )}
@@ -270,8 +281,18 @@ function SignUp() {
                                 <p className='error text-red-500 mt-1'></p>
                             </div>
                         </form>
-                        <button type="submit" onClick={handleOtpSubmit} className="w-full cursor-pointer mt-3 bg-gray-800 text-white py-2 rounded">
-                            {isLoading ? 'Loading...' : 'Verify'}
+                        {/* <button type="submit" onClick={handleOtpSubmit} className="w-full cursor-pointer mt-3 bg-gray-800 text-white py-2 rounded">
+                            {loading ? 'Loading...' : 'Verify'}
+                        </button> */}
+                        <button 
+                            type='submit'
+                            onClick={handleOtpSubmit} 
+                            className={`w-full cursor-pointer mt-3 bg-green-800 text-white py-2 rounded flex items-center justify-center ${
+                                loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-green-800 hover:bg-green-700'
+                            }`}
+                            disabled={loading}
+                        >
+                            {loading ? <ClipLoader size={20} color='#ffffff' loading={loading} speedMultiplier={1} /> : 'Verify'}
                         </button>
                     </>
                    )}

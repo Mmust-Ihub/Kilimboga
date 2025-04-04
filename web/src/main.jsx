@@ -8,18 +8,38 @@ import Orders from './subComponents/Orders.jsx'
 import SignUp from './mainComponents/SignUp.jsx'
 import Login from './mainComponents/Login.jsx'
 import Admin from './mainComponents/Admin.jsx'
+import Protected from './mainComponents/Protected.jsx'
+import AdminProtected from './mainComponents/AdminProtected.jsx'
 
 createRoot(document.getElementById('root')).render(
   // <StrictMode>
      <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={
+          <Protected>
+            <Dashboard />
+          </Protected>
+        }/>
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/products" element={<Products />} />
-        <Route path="/orders" element={<Orders />} />
-        <Route path="/admin" element={<Admin />} />
+        <Route path="/products" element={
+          <Protected>
+            <Products />
+          </Protected>
+        }/>
+        <Route path="/orders" element={
+          <Protected>
+            <Orders />
+          </Protected>
+        } />
+        <Route path="/admin" element={
+          <Protected>
+            {/* <AdminProtected> */}
+              <Admin />
+            {/* </AdminProtected> */}
+          </Protected>
+        } />
       </Routes>
     </BrowserRouter>
   // </StrictMode>

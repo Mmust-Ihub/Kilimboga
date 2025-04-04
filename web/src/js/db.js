@@ -105,13 +105,14 @@ class Database {
 
             console.log(resData)
 
-            localStorage.setItem('token', JSON.stringify(resData.token))
-            localStorage.setItem('user', JSON.stringify(resData.user))
+            sessionStorage.setItem('token', JSON.stringify(resData.token))
+            sessionStorage.setItem('user', JSON.stringify(resData.user))
     
             response = {
                 status: true,
                 message: "Login successful",
                 user: resData.user,
+                token: resData.token,
             }
     
             return response
@@ -138,8 +139,6 @@ class Database {
             });
     
             const resData = await res.json();
-
-            console.log(resData)
     
             let response = {
                 status: true,

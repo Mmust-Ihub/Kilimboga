@@ -7,7 +7,7 @@ import Database from '../js/db.js';
 const db = new Database()
 
 function Orders(){
-    const [token, setToken] = useState(JSON.parse(localStorage.getItem('token')))
+    const [token, setToken] = useState(JSON.parse(sessionStorage.getItem('token')))
     const [orders, setOrders] = useState([])
 
     useEffect(()=>{
@@ -29,11 +29,11 @@ function Orders(){
 
     return (
         <>
-        <Navbar user={'user'} />
-        <div className='mx-8 lg:mx-25 flex justify-between items-center'>
+        <Navbar>
+        <div className='mx-10 flex justify-between items-center mt-5'>
             <h1 className="font-semibold text-lg" >Orders</h1>
         </div>
-        <div className="mx-8 lg:mx-25 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-5">
+        <div className="mx-10 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-5">
             <div className='border-1 border-gray-300 rounded shadow-lg p-5'>
                 <p className='bg-green-500 w-max rounded-2xl px-3 py-1 text-white text-xs mb-3'>Delivered</p>
                 <div className='flex justify-between items-center border-b-1 border-gray-300 pb-3'>
@@ -100,6 +100,7 @@ function Orders(){
             </div>
             <Toaster />
         </div>
+        </Navbar>
         </>
     )
 }

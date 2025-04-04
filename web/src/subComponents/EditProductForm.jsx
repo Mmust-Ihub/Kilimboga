@@ -15,7 +15,7 @@ function EditProductForm({name, description, category, price, qty,image,  id, sh
         productQuantity: qty,
         productPrice: price
     });
-    const [token, setToken] = useState(JSON.parse(localStorage.getItem('token')))
+    const [token, setToken] = useState(JSON.parse(sessionStorage.getItem('token')))
     const [deleteLoading, setDeleteLoading] = useState(false)
     const [loading, setLoading] = useState(false)
 

@@ -13,7 +13,7 @@ function Products(){
     const [addProducts, setAddProducts] = useState(false)
     const [editProducts, setEditProducts] = useState(false)
     const [products, setProducts] = useState([])
-    const [token, setToken] = useState(JSON.parse(localStorage.getItem('token')))
+    const [token, setToken] = useState(JSON.parse(sessionStorage.getItem('token')))
     const [refresh, setRefresh] = useState(false)
     const [loading, setLoading] = useState(false)
 
@@ -156,8 +156,8 @@ function Products(){
 
     return (
         <>
-            <Navbar user={'user'} />
-            <div className='mx-8 lg:mx-25 flex justify-between items-center'>
+            <Navbar>
+            <div className='mx-10 mt-5 flex justify-between items-center'>
                 <h1 className="font-semibold text-lg" >Products</h1>
                 <div>
                     <button onClick={showAddForm} className="mr-4 px-6 py-1 cursor-pointer bg-gray-800 hover:bg-gray-700 text-white text-sm rounded">Add</button>
@@ -166,7 +166,7 @@ function Products(){
             </div>
 
            {viewProducts ? ( 
-                <div className='mx-8 lg:mx-25 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-5'>
+                <div className='mx-10 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-5'>
                     {products.length > 0 ? 
                         products.map((product) => (
                             <div key={product._id} className="rounded shadow-xl ring-1 ring-gray-100 px-6 py-5">
@@ -196,7 +196,7 @@ function Products(){
             ): null}
 
             {addProducts && (
-                <div className="mx-8 lg:mx-25 mt-5 py-10 px-7 rounded shadow-xl">
+                <div className="mx-10 mt-5 py-10 px-7 rounded shadow-xl">
                     <form className="w-full grid grid-cols-2 gap-4 text-sm" action="">
                         <div className="flex flex-col">
                             <label htmlFor="productName">Product Name</label>
@@ -265,7 +265,7 @@ function Products(){
                     showView={showView}
                 />
             )}
-
+            </Navbar>
             <Toaster />
         </>
     )

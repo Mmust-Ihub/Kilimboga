@@ -5,7 +5,6 @@ import { FaArrowTrendUp, FaShop } from "react-icons/fa6";
 import { PiFarmFill } from "react-icons/pi";
 import { IoStatsChart } from "react-icons/io5";
 import { FaChevronRight } from "react-icons/fa";
-// import { BarChart } from '@mui/x-charts/BarChart';
 import {
     ComposedChart,
     Line,

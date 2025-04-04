@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import { GrMoney, GrCart } from "react-icons/gr";
-import { FaArrowTrendUp } from "react-icons/fa6";
+import { GrMoney } from "react-icons/gr";
 import toast, { Toaster } from 'react-hot-toast';
-import { BarChart } from '@mui/x-charts/BarChart';
 import { LuCrown } from "react-icons/lu";
+import { FaChevronRight } from "react-icons/fa";
+import {ComposedChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,Legend,ResponsiveContainer,PieChart,Pie} from 'recharts';
 import Navbar from './Navbar.jsx'
 import Database from '../js/db.js';
 
@@ -21,114 +21,199 @@ function App() {
     previousMonthOrders: 0,
     totalRevenue: 0,
   })
-  const [token, setToken] = useState(JSON.parse(localStorage.getItem('token')))
+  const [token, setToken] = useState(JSON.parse(sessionStorage.getItem('token')))
 
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"]
   let barData = Array.from({length:12}, () => 0)
-  vendorStats.monthlyRevenue.length > 0 && vendorStats.monthlyRevenue.forEach((item) => {
-    barData[item._id - 1] = item.totalRevenue
+  vendorStats.monthlyRevenue.length > 0 && vendorStats.monthlyRevenue.forEach((item, index) => {
+    barData[item._id - 1] = {name: months[index], sales: item.totalRevenue}
+  })
+
+  const bestSellersData = []
+  vendorStats.bestSellingProducts.length > 0 && vendorStats.bestSellingProducts.forEach((item, index) => {
+    bestSellersData[index] = {
+      name: item.productName,
+      population: item.totalSold,
+      fill: "#8884d8",
+    }
   })
 
   useEffect(()=>{
-    let response
     async function getData(){
-      response = await db.vendorStats(token)
-    }
-    getData().then(()=>{
+      let response = await db.vendorStats(token)
       if(!response.status){
         toast.error(response.message)
       }
-  
       setVendorStats(response.data)
-    })
+    }
+    toast.promise(getData(), {
+      loading: 'Fetching data...',
+      success: 'Data fetched successfully',
+      error: 'Error when fetching data',
+    });
   },[])
 
   return (
     <>
-      <Navbar user={'user'} />
-      <div className='mx-8 lg:mx-25'>
+        <Navbar>
+          <div className='mx-10 mt-5 pb-10'>
+              <h1 className='text-xl font-bold text-center lg:text-left'>Your total revenue</h1>
+              <h1 className='text-3xl font-extrabold mb-5 text-green-600 text-center lg:text-left'>{vendorStats.totalRevenue}</h1>
 
-        <h1 className='text-2xl font-bold text-center lg:text-left'>Your total revenue</h1>
-        <h1 className='text-5xl font-extrabold mb-8 text-green-600 text-center lg:text-left'>{vendorStats.totalRevenue}</h1>
+              <div className='w-full grid grid-cols-3 gap-4'>
+                  <div className="pt-1 shadow-xl ring-1 ring-gray-200 rounded flex flex-col justify-between">
+                      <div className='flex items-start justify-between mx-6 mt-5'>
+                          <div className='text-xl w-max rounded p-3 bg-green-900 text-white border-1 border-gray-300 flex items-center'>
+                            < GrMoney />
+                          </div>
+                          <div className='w-full flex flex-col justify-between items-end'>
+                              <p className='text-sm font-semibold ml-3 text-gray-500'>Month Orders</p>
+                              <h1 className='text-2xl font-bold'>{vendorStats.currentMonthOrders}</h1>
+                          </div>
+                      </div>
+                      <div className='rounded bg-gray-300 w-full flex py-3 px-6 justify-between items-center mt-5'>
+                          <div className='flex items-center'>
+                              <h1 className='text-xs text-green-800'>{vendorStats.percentageChange} %</h1>
+                              <h1 className='text-xs ml-2 font-semibold'>Last Month</h1>
+                          </div>
+                          <div className='flex items-center justify-center rounded-3xl p-1 bg-green-900 text-white text-xs cursor-pointer'>
+                              <FaChevronRight />
+                          </div>
+                      </div>
+                  </div>
 
-        <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 rounded shadow-lg ring-1 ring-gray-300'>
+                  <div className="pt-1 shadow-xl ring-1 ring-gray-200 rounded flex flex-col justify-between">
+                      <div className='flex items-start justify-between mx-6 mt-5'>
+                          <div className='text-xl w-max rounded p-3 bg-green-900 text-white border-1 border-gray-300 flex items-center'>
+                              <LuCrown />
+                          </div>
+                          <div className='w-full flex flex-col justify-between items-end'>
+                              <p className='text-sm font-semibold ml-3 text-gray-500'>Best Seller</p>
+                              <h1 className='text-2xl font-bold'>{vendorStats.bestSellingProducts.length > 0 ? vendorStats.bestSellingProducts.length[0].productName : "-"}</h1>
+                          </div>
+                      </div>
+                      <div className='rounded bg-gray-300 w-full flex py-3 px-6 justify-between items-center mt-5'>
+                          <div className='flex items-center'>
+                              {/* <h1 className='text-xs text-green-800'>200%</h1> */}
+                              <h1 className='text-xs ml-2 font-semibold'>{vendorStats.bestSellingProducts.length > 0 ? vendorStats.bestSellingProducts.length[0].totalSold : 0} items sold</h1>
+                          </div>
+                          <div className='flex items-center justify-center rounded-3xl p-1 bg-green-900 text-white text-xs cursor-pointer'>
+                              <FaChevronRight />
+                          </div>
+                      </div>
+                  </div>
 
-          <div className="px-6 py-3 lg:py-5 border-b-1 lg:border-r-1 border-gray-300 flex flex-col justify-between">
-            <div className='my-2 text-2xl w-max rounded-3xl border-gray-300 flex items-center'>
-              < GrMoney />
-              <p className='text-xl font-semibold ml-3'>Orders</p>
-            </div>
-            <div>
-              <div className='w-full flex justify-between items-end mt-5'>
-                <h1 className='text-2xl font-bold'>{vendorStats.currentMonthOrders}</h1>
-                <div className='flex flex-row justify-center items-center text-base text-green-600'>
-                  <FaArrowTrendUp />
-                  <p className='ml-2'>{vendorStats.percentageChange} %</p>
-                </div>
+                  <div className="pt-1 shadow-xl ring-1 ring-gray-200 rounded flex flex-col justify-between">
+                      <div className='flex items-start justify-between mx-6 mt-5'>
+                          <div className='text-xl w-max rounded p-3 bg-green-900 text-white border-1 border-gray-300 flex items-center'>
+                              <LuCrown />
+                          </div>
+                          <div className='w-full flex flex-col justify-between items-end'>
+                              <p className='text-sm font-semibold ml-3 text-gray-500'>Delivered Orders</p>
+                              <h1 className='text-2xl font-bold'>{vendorStats.deliveredOrders}</h1>
+                          </div>
+                      </div>
+                      <div className='rounded bg-gray-300 w-full flex py-3 px-6 justify-between items-center mt-5'>
+                          <div className='flex items-center'>
+                              <h1 className='text-xs text-green-800'>200%</h1>
+                              <h1 className='text-xs ml-2 font-semibold'>Last Month</h1>
+                          </div>
+                          <div className='flex items-center justify-center rounded-3xl p-1 bg-green-900 text-white text-xs cursor-pointer'>
+                              <FaChevronRight />
+                          </div>
+                      </div>
+                  </div>
+                  
               </div>
-              <p className='text-sm text-gray-400 mt-2'>Compared to last month</p>
-            </div>
-           
-          </div>
 
-          <div className="px-6 lg:px-2 py-3 lg:py-5 border-b-1 lg:border-r-1 border-gray-300 flex flex-col justify-between">
-            <div className='my-2 text-2xl w-max rounded-3xl border-gray-300 flex items-center'>
-              <GrCart />
-              <p className='text-xl font-semibold ml-3'>Products</p>
-            </div>
-            <div>
-              <div className='w-full flex justify-between items-end mt-5'>
-                <h1 className='text-2xl font-bold'>200</h1>
-              </div>
-            </div>
-            <p className='text-sm text-gray-400 mt-2'>Total products</p>
-          </div>
+              <div className='flex items-start justify-between w-full mt-10'>
+                    <div className='shadow-xl ring-1 ring-gray-200 rounded w-4/6'>
+                        <h1 className='text-base font-semibold mt-0 mb-0 border-b-1 border-gray-200 px-5 pt-3 pb-3'>Sales overview</h1>
 
-          <div className="px-6 lg:px-2 py-3 lg:py-5 border-b-1 lg:border-r-1 border-gray-300 flex flex-col justify-between">
-            <div className='my-2 text-2xl w-max rounded-3xl border-gray-300 flex items-center'>
-              <LuCrown />
-              <p className='text-xl font-semibold ml-3'>Best seller</p>
-            </div>
-            <div>
-              <div className='w-full flex justify-between items-end mt-5'>
-                <h1 className='text-2xl font-bold'>{vendorStats.bestSellingProducts.length > 0 ? vendorStats.bestSellingProducts.length[0].productName : 0}</h1>
-              </div>
-            </div>
-            <p className='text-sm text-gray-400 mt-2'>{vendorStats.bestSellingProducts.length > 0 ? vendorStats.bestSellingProducts.length[0].totalSold : 0} items sold</p>
-          </div>
+                        <div className='pt-5'>
+                            <ResponsiveContainer width="100%" height={450}>
+                                <ComposedChart
+                                data={barData}
+                                margin={{
+                                    top: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                    left: 0,
+                                }}
+                                >
+                                    <CartesianGrid 
+                                        strokeDasharray="3 3" 
+                                        stroke="#e0e0e0"
+                                        vertical={false}  // Hide vertical grid lines
+                                    />
+                                    <XAxis 
+                                        dataKey="name"
+                                        tick={{ 
+                                            fontSize: 12,
+                                            fontFamily: 'Arial',
+                                            fill: '#555'
+                                        }}
+                                        axisLine={{ stroke: '#ccc', strokeWidth: 1 }}
+                                        tickMargin={10}  // Space between ticks and axis line
+                                        padding={{ left: 20, right: 20 }}  // Padding for first/last bars
+                                    />
+                                <YAxis 
+                                        tick={{ 
+                                        fontSize: 11,
+                                        fontFamily: 'Arial',
+                                        fill: '#666'
+                                        }}
+                                        axisLine={{ stroke: '#ccc', strokeWidth: 1 }}
+                                        tickMargin={10}
+                                    />
+                                    <Tooltip contentStyle={{
+                                        backgroundColor: '#fff',
+                                        border: '1px solid #ddd',
+                                        borderRadius: '4px',
+                                        fontSize: '12px',
+                                        fontFamily: 'Arial'
+                                    }}/>
+                                    <Legend wrapperStyle={{
+                                        paddingTop: '20px',
+                                        paddingBottom: '20px',
+                                        fontSize: '13px',
+                                        fontFamily: 'Arial'
+                                    }}/>
+                                    <Bar 
+                                        dataKey="sales" barSize={70} fill="#413ea0" name="Total Sales" radius={[4, 4, 0, 0]} isAnimationActive={true} animationDuration={1500} />
+                                </ComposedChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>
 
-          <div className="px-6 lg:px-2 py-3 lg:py-5 border-b-1 lg:border-r-1 border-gray-300 flex flex-col justify-between">
-            <div className='my-2 text-2xl w-max rounded-3xl border-gray-300 flex items-center'>
-              <LuCrown />
-              <p className='text-xl font-semibold ml-3'>Delivered Orders</p>
-            </div>
-            <div>
-              <div className='w-full flex justify-between items-end mt-5'>
-                <h1 className='text-2xl font-bold'>{vendorStats.deliveredOrders}</h1>
+                    <div className='shadow-xl ring-1 ring-gray-200 rounded w-2/6 ml-4'>
+                        <h1 className='text-base font-semibold mt-0 mb-0 border-b-1 border-gray-200 px-5 pt-3 pb-3'>Best sellers</h1>
+                        <div className="pt-5">
+                        <ResponsiveContainer width="100%" height={450}>
+                            <PieChart>
+                                <Legend wrapperStyle={{
+                                        paddingTop: '20px',
+                                        paddingBottom: '20px',
+                                        fontSize: '13px',
+                                        fontFamily: 'Arial'
+                                }}/>
+                                <Tooltip contentStyle={{
+                                    backgroundColor: '#fff',
+                                    border: '1px solid #ddd',
+                                    borderRadius: '4px',
+                                    fontSize: '12px',
+                                    fontFamily: 'Arial',
+                                    cursor: 'pointer'
+                                }}/>
+                                <Pie data={bestSellersData} dataKey="population" nameKey="name" cx="50%" cy="50%" outerRadius={180} fill="#8884d8" />
+                            </PieChart>
+                        </ResponsiveContainer>
+                        </div>
+                    </div>
               </div>
-            </div>
-            <p className='text-sm text-gray-400 mt-2'>Successful deliveries</p>
           </div>
-          
-        </div>
-        <h1 className='text-lg font-semibold mt-5'>Sales overview</h1>
-        <div className='w-full shadow-xl ring-1 ring-gray-400 mt-5 rounded mb-10 lg:mb-0'>
-          <BarChart
-            xAxis={[{ 
-              scaleType: 'band', 
-              data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'],
-              colorMap: {
-                type: 'ordinal',
-                colors: ['green']
-              }
-              }]}
-            series={[{ data: barData }]}
-            // width={500}
-            height={500}
-            grid={{ vertical: true, horizontal: true }}
-          />
-        </div>
-      </div>
-      <Toaster />
+        </Navbar>
+        <Toaster />
     </>
    
   )
