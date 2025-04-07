@@ -8,6 +8,7 @@ const db = new Database()
 
 function Orders(){
     const [token, setToken] = useState(JSON.parse(sessionStorage.getItem('token')))
+    const [user, setUser] = useState(JSON.parse(sessionStorage.getItem('user')))
     const [orders, setOrders] = useState([])
 
     useEffect(()=>{
@@ -18,18 +19,17 @@ function Orders(){
             } else {
                 console.log(response.data);
                 // setProducts(response.data);
+                if(response.data.length < 1){
+                    toast("No orders found", {icon: '😢',})
+                }
             }
         }
-        toast.promise(getData(), {
-            loading: 'Fetching orders...',
-            success: 'Orders fetched successfully',
-            error: 'Error when fetching orders',
-          });
+       getData()
       },[])
 
     return (
         <>
-        <Navbar>
+        <Navbar user={user} activePage={"orders"}>
         <div className='mx-10 flex justify-between items-center mt-5'>
             <h1 className="font-semibold text-lg" >Orders</h1>
         </div>

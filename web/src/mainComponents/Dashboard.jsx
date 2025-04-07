@@ -48,16 +48,12 @@ function App() {
       console.log(response.data)
       setVendorStats(response.data)
     }
-    toast.promise(getData(), {
-      loading: 'Fetching data...',
-      success: 'Data fetched successfully',
-      error: 'Error when fetching data',
-    });
+   getData()
   },[])
 
   return (
     <>
-        <Navbar>
+        <Navbar user={user} activePage={"dashboard"}>
           <div className='mx-10 mt-5 pb-10'>
               <h1 className='text-xl font-bold text-center lg:text-left'>Your total revenue</h1>
               <h1 className='text-3xl font-extrabold mb-5 text-green-600 text-center lg:text-left'>{vendorStats.totalRevenue}</h1>

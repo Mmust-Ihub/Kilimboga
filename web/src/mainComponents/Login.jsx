@@ -31,9 +31,6 @@ function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        console.log(formData)
-
         setLoading(true);
 
         let {value, error} = validate('login', formData)
@@ -43,26 +40,22 @@ function Login() {
             let message = error.details[0].message.replace(/"/g, '');
             toast.error(message)
             return
-        }else{
-            console.log(value)
         }
 
         const res = await db.login(formData)
 
-        console.log(res)
-
         setLoading(false);
 
-        if (!res.status) {
+        if (res.status == false) {
             toast.error(res.message)
             return
         }
 
-        toast.success(res.message)
-
         if(res.user.role === 'admin'){
+            toast.success(res.message)
             window.location.href = '/admin'
         }else if(res.user.role === 'vendor'){
+            toast.success(res.message)
             window.location.href = '/dashboard'
         }else if(res.user.role === 'farmer'){
             toast.error('You are not allowed to login as a farmer')

@@ -14,7 +14,8 @@ function Products(){
     const [editProducts, setEditProducts] = useState(false)
     const [products, setProducts] = useState([])
     const [token, setToken] = useState(JSON.parse(sessionStorage.getItem('token')))
-    const [refresh, setRefresh] = useState(false)
+    const [user, setUser] = useState(JSON.parse(sessionStorage.getItem('user')))
+    const [refresh, setRefresh] = useState(true)
     const [loading, setLoading] = useState(false)
 
     const [formData, setFormData] = useState({
@@ -36,26 +37,27 @@ function Products(){
     });
 
     useEffect(()=>{
-        async function getData() {
-            const response = await db.getProducts(token);
-            if (!response.status) {
-                toast.error(response.message);
-            } else {
-                setProducts(response.data);
-
-                setEditProducts(false)
-                setAddProducts(false)
-                setViewProducts(true)
-
-                setRefresh(false)
+        if (refresh) {
+            console.log('Refreshing...')
+            async function getData() {
+                const response = await db.getProducts(token);
+                if (!response.status) {
+                    toast.error(response.message);
+                } else {
+                    setProducts(response.data);
+    
+                    if (response.data.length < 1) {
+                        toast("No products found", { icon: '😢' });
+                    }
+    
+                    setEditProducts(false);
+                    setAddProducts(false);
+                    setViewProducts(true);
+                }
+                setRefresh(false);
             }
+            getData();
         }
-        // getData();
-        toast.promise(getData(), {
-            loading: 'Fetching products...',
-            success: 'Products fetched successfully',
-            error: 'Error when fetching products',
-          });
       },[refresh])
 
     function showAddForm(){
@@ -124,8 +126,6 @@ function Products(){
             return
         }
 
-        // To do: Upload image fn
-        // To do: Upload to db fn
         const payload = {
             ...formData,
             productImage: document.getElementById('productImage').files[0]
@@ -156,7 +156,7 @@ function Products(){
 
     return (
         <>
-            <Navbar>
+            <Navbar user={user} activePage={"products"}>
             <div className='mx-10 mt-5 flex justify-between items-center'>
                 <h1 className="font-semibold text-lg" >Products</h1>
                 <div>

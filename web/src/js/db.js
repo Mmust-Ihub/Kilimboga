@@ -103,9 +103,9 @@ class Database {
             });
     
             const resData = await res.json();
-
-            console.log(resData)
-
+            
+            sessionStorage.removeItem('token')
+            sessionStorage.removeItem('user')
             sessionStorage.setItem('token', JSON.stringify(resData.token))
             sessionStorage.setItem('user', JSON.stringify(resData.user))
     
