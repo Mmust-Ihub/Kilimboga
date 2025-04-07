@@ -97,6 +97,12 @@ const getProducts = catchAsync(async (req, res) => {
   });
 });
 
+const getExperts = catchAsync(async(req, res) => {
+  const {location} = req.user
+  const experts = await getNearbyExperts(location)
+  return  res.status(httpStatus.OK).json(experts)
+})
+
 export default {
   famerProfile,
   farmerStats,
@@ -104,4 +110,5 @@ export default {
   getGreenHouses,
   predict,
   getProducts,
+  getExperts
 };

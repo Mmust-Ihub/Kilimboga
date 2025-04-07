@@ -11,5 +11,6 @@ farmerRouter.post("/green-house", validate(farmerValidator.AddGreenHouseSchema),
 farmerRouter.get("/green-house",  authenticate, farmerController.getGreenHouses)
 farmerRouter.post("/predict", validate(farmerValidator.predictSchema), authenticate, farmerController.predict)
 farmerRouter.get("/products", validate(farmerValidator.products), authenticate, farmerController.getProducts)
+farmerRouter.get("/experts", authenticate, farmerController.getExperts)
 
 export default farmerRouter
