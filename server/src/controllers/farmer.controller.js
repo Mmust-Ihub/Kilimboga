@@ -1,14 +1,20 @@
 import httpStatus from "http-status";
 import { catchAsync } from "../utils/catchAsync.js";
-import { allowList, generateCode, getNearbyExperts } from "../utils/utils.js";
+import {
+  allowList,
+  blockList,
+  generateCode,
+  getNearbyExperts,
+} from "../utils/utils.js";
 import { greenHouseModel } from "../models/farmer.model.js";
 import AIModel from "../helpers/AIModel.js";
 import formatPrompt from "../utils/formatPrompt.js";
 import { ApiError } from "../utils/APiError.js";
 import farmerService from "../services/farmer.service.js";
-import db from "../helpers/firebase.js";
-import config from "../config/config.js";
+import allRoles from "../config/roles.js";
 import productModel from "../models/product.model.js";
+import { userModel } from "../models/user.model.js";
+import uploadFile from "../helpers/uploadFile.js";
 
 const famerProfile = catchAsync(async (req, res) => {
   const profile = allowList(req.user, [
@@ -51,10 +57,13 @@ const getGreenHouses = catchAsync(async (req, res) => {
     greenHouse = allowList(greenHouse, ["name", "plant", "farmId", "schedule"]);
     return res.status(httpStatus.OK).json(greenHouse);
   }
-  let greenHouses = await greenHouseModel.find({ farmerId: req.user.id });
+  let greenHouses = await greenHouseModel
+    .find({ farmerId: req.user.id })
+    .sort({ createdAt: -1 })
+    .lean();
   let houses = [];
   greenHouses.forEach((greenhouse) => {
-    houses.push(allowList(greenhouse, ["name", "farmId"]));
+    houses.push(blockList(greenhouse, ["createdAt", "updatedAt"]));
   });
   return res.status(httpStatus.OK).json(houses);
 });
@@ -97,11 +106,26 @@ const getProducts = catchAsync(async (req, res) => {
   });
 });
 
-const getExperts = catchAsync(async(req, res) => {
-  const {location} = req.user
-  const experts = await getNearbyExperts(location)
-  return  res.status(httpStatus.OK).json(experts)
-})
+const getExperts = catchAsync(async (req, res) => {
+  const { location } = req.user;
+  const experts = await getNearbyExperts(location);
+  return res.status(httpStatus.OK).json(experts);
+});
+
+const requestToBeExpert = catchAsync(async (req, res) => {
+  const user = await userModel.findById(req.params.id);
+  const files = req.files;
+  if (!files?.length == 0) {
+    user.documents = await uploadFile(files[0]);
+    user.role = allRoles.EXPERT;
+    user.isSpecial = true;
+  }
+  await user.save();
+  return res.status(httpStatus.ACCEPTED).json({
+    status: "success",
+    message: "Your request has been received for processing.",
+  });
+});
 
 export default {
   famerProfile,
@@ -110,5 +134,6 @@ export default {
   getGreenHouses,
   predict,
   getProducts,
-  getExperts
+  getExperts,
+  requestToBeExpert,
 };

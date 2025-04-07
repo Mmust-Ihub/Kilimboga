@@ -182,39 +182,6 @@
   ]
   ```
 
-> ## get a single green house
->
-> > **request**
-
-- **_url_**: `{{base_url}}/api/v1/farmer/green-house`
-- **_method:_** `GET`
-- **_headers:_**
-
-  - Authorization: Bearer **token**
-
-- **_Required query parameters:_**
-
-  | Parameter |  Type  | info       |
-  | :-------: | :----: | :--------- |
-  |    id     | string | the farmId |
-
-- **_example url_** :
-
-```yaml
-url: {{base_url}}/api/v1/farmer/green-house?id=X5QK8
-```
-
-> > **response:**
-
-- ```json
-  {
-    "name": "Simple",
-    "plant": "cabages",
-    "farmId": "X5QK8",
-    "schedule": "The plant growth schedule"
-  }
-  ```
-
 > ## Pest and Disease Prediction
 >
 > > **request**
@@ -363,6 +330,52 @@ url: {{base_url}}/api/v1/farmer/predict?type=pest
       }
     }
   ]
+  ```
+
+## Nearby Experts.
+
+> > **request**
+
+- **_url_**: `{{base_url}}/api/v1/farmer/experts`
+- **_method:_** `GET`
+- **_headers:_**
+
+  - Authorization: Bearer **token**
+
+> > **example response**
+
+- ```json
+  [
+    {
+      "_id": "67dc5d07bb2d7175a2b4d65e",
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "johndoe@gmail.com",
+      "phoneNumber": "0712345678",
+      "location": {
+        "coordinates": [34.75229, 0.28422]
+      }
+    }
+  ]
+  ```
+
+## Request to be an Expert.
+
+> > **request**
+
+- **_url_**: `{{base_url}}/api/v1/farmer/apply/{userId}`
+- **_method:_** `POST`
+- **_headers:_**
+
+  - Authorization: Bearer **token**
+
+> > **_example response_**
+
+- ```json
+  {
+    "status": "success",
+    "message": "Your request has been received for processing."
+  }
   ```
 
 # Vendor
@@ -632,7 +645,7 @@ url: {{base_url}}/admin/users?role=farmer&isApproved=false
 - **_example url_** :
 
 ```yaml
-url: {{base_url}}/admin/user/{id}
+url: {{base_url}}/api/xv1/admin/user/{id}
 ```
 
 > > **response**

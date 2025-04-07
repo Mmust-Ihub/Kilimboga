@@ -12,5 +12,7 @@ farmerRouter.get("/green-house",  authenticate, farmerController.getGreenHouses)
 farmerRouter.post("/predict", validate(farmerValidator.predictSchema), authenticate, farmerController.predict)
 farmerRouter.get("/products", validate(farmerValidator.products), authenticate, farmerController.getProducts)
 farmerRouter.get("/experts", authenticate, farmerController.getExperts)
+farmerRouter.post("/apply/:id", authenticate, farmerController.requestToBeExpert)
+farmerRouter.post("/experts/:id", authenticate, farmerController.requestToBeExpert)
 
-export default farmerRouter
+export default farmerRouter;

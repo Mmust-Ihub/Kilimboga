@@ -52,7 +52,8 @@ const getProducts = catchAsync(async (req, res) => {
 });
 
 const editProduct = catchAsync(async (req, res) => {
-  if (req.files) {
+  console.log(req.body)
+  if (!req.files?.length === 0) {
     req.body.imageUrl = await uploadFile(req.files[0]);
   }
   const updatedProduct = await productModel.findByIdAndUpdate(

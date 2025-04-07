@@ -15,8 +15,7 @@ const createUser = async (userBody, files) => {
     userBody.documents = await uploadFile(files[0]);
   }
   userBody.authCode = generateCode(config.auth.length);
-  console.log(userBody)
-  const newUser = await userModel.create(userBody);
+  await userModel.create(userBody);
   let payload = registerEmail({name: userBody.firstName, authCode: userBody.authCode});
   await sendEmail({...payload, to: userBody.email});
   return "newUser";

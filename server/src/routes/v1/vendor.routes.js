@@ -16,7 +16,7 @@ vendorRouter.post(
   vendorController.addProduct
 );
 vendorRouter.get("/products", authenticate, vendorController.getProducts);
-vendorRouter.patch("/product", authenticate, vendorController.editProduct);
+vendorRouter.patch("/product", vendorController.editProduct);
 vendorRouter.delete("/product", authenticate, vendorController.deleteProduct);
 vendorRouter.get("/orders", authenticate, validate(vendorValidate.getOrders), vendorController.getOrders);
 
