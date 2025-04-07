@@ -8,5 +8,7 @@ const adminRouter = Router()
 
 adminRouter.get("/stats", authenticate, adminController.adminStats)
 adminRouter.post("/approve", authenticate, validate(adminValidator.approveUserSchema), adminController.approveUser)
+adminRouter.get("/users", authenticate, validate(adminValidator.users),adminController.getUsers)
+adminRouter.get("/user/:id", authenticate, adminController.getUser)
 
 export default adminRouter

@@ -64,6 +64,7 @@ export const getNearbyExperts = async (farmerLocation) => {
         lastName: 1,
         email: 1,
         phoneNumber: 1,
+        location: 1
       }
     )
     .limit(config.vet.limit);

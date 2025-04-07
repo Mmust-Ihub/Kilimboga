@@ -13,7 +13,6 @@ const registerUser = catchAsync(async (req, res) => {
   if (await userModel.isEmailTaken(req.body.email)) {
     throw new ApiError(httpStatus.BAD_REQUEST, "email is already taken ...");
   }
-
   if (await userModel.isNumberTaken(req.body.phoneNumber)) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,

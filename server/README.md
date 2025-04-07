@@ -14,9 +14,9 @@
 
 1. [Authentication](#authentication)
 2. [Farmer](#farmer)
-3. [Admin](#admin)
-4. [Expert](#expert)
-5. [Vendor](#vendor)
+3. [Expert](#expert)
+4. [Vendor](#vendor)
+5. [Admin](#admin)
 6. [IOT](#iot)
 
 # Authentication
@@ -333,9 +333,36 @@ url: {{base_url}}/api/v1/farmer/predict?type=pest
         "createdAt": "2025-03-31T12:59:13.269Z",
         "updatedAt": "2025-03-31T12:59:13.269Z",
         "__v": 0
-      },
+      }
     ]
   }
+  ```
+
+## Nearby Experts.
+
+> > **request**
+
+- **_url_**: `{{base_url}}/api/v1/farmer/experts`
+- **_method:_** `GET`
+- **_headers:_**
+
+  - Authorization: Bearer **token**
+
+> > **example response**
+
+- ```json
+  [
+    {
+      "_id": "67dc5d07bb2d7175a2b4d65e",
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "johndoe@gmail.com",
+      "phoneNumber": "0712345678",
+      "location": {
+        "coordinates": [34.75229, 0.28422]
+      }
+    }
+  ]
   ```
 
 # Vendor
@@ -510,6 +537,127 @@ url: {{base_url}}/api/v1/vendor/orders?state="pending"
 - **_response_body:_**
 - ```json
   [{}]
+  ```
+
+# Admin
+
+> ## Statistics
+>
+> > **request**
+
+- **_url_**: `{{base_url}}/api/v1/admin/stats`
+- **_method:_** `GET`
+- **_headers:_**
+- Authorization: Bearer **token**
+
+> > **response**
+
+- ```json
+  [
+    {
+      "totalUsers": [{ "count": 4 }],
+      "verifiedUsers": [{ "count": 4 }],
+      "pendingApprovals": [{ "count": 1 }],
+      "approvedUsers": [{ "count": 2 }],
+      "specialUsers": [{ "count": 3 }],
+      "roleDistribution": [
+        { "_id": "admin", "count": 1 },
+        { "_id": "farmer", "count": 1 },
+        { "_id": "vendor", "count": 2 }
+      ],
+      "recentUsers": [{ "count": 4 }],
+      "userGrowth": [
+        { "_id": 3, "count": 3 },
+        { "_id": 4, "count": 1 }
+      ]
+    }
+  ]
+  ```
+
+> ## Get Users.
+>
+> > **request**
+
+- **_url_**: `{{base_url}}/api/v1/admin/users`
+- **_method:_** `GET`
+- **_headers:_**
+- Authorization: Bearer **token**
+- **_Required query parameters:_**
+
+  | Parameter  |  Type   |            options            |
+  | :--------: | :-----: | :---------------------------: |
+  |    role    | string  | _farmer_, _expert_ , _vendor_ |
+  | isApproved | boolean |        _true_, _false_        |
+
+- **_example url_** :
+
+```yaml
+url: {{base_url}}/admin/users?role=farmer&isApproved=false
+```
+
+> > **response**
+
+- ```json
+  {
+    "totalCount": 1,
+    "users": [
+      {
+        "_id": "67dc5d07bb2d7175a2b4d65e",
+        "firstName": "John",
+        "lastName": "Doe",
+        "email": "johndoe@gmail.com",
+        "location": {
+          "type": "Point",
+          "coordinates": [34.75229, 0.28422]
+        }
+      }
+    ]
+  }
+  ```
+
+> ## Get a specific user.
+>
+> > **request**
+
+- **_url_**: `{{base_url}}/api/v1/admin/user`
+- **_method:_** `GET`
+- **_headers:_**
+- Authorization: Bearer **token**
+- **_Required path parameter:_**
+
+  | Parameter |  Type  |       options        |
+  | :-------: | :----: | :------------------: |
+  |    id     | string | _The id of the user_ |
+
+- **_example url_** :
+
+```yaml
+url: {{base_url}}/admin/user/{id}
+```
+
+> > **response**
+
+- ```json
+  {
+    "_id": "67dc5d07bb2d7175a2b4d65e",
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "johndoe@gmail.com",
+    "phoneNumber": "0712345678",
+    "location": {
+      "type": "Point",
+      "coordinates": [34.75229, 0.28422],
+      "_id": "67dc5d07bb2d7175a2b4d65f"
+    },
+    "role": "expert",
+    "isVerified": true,
+    "isSpecial": true,
+    "isApproved": true,
+    "documents": "https://res.cloudinary.com/dqrw1zi7d/image/upload/v1742494984/kilimboga/iajwnt3lyvxro1vuprvg.pdf",
+    "imageUrl": null,
+    "joined": "2025-03-20T18:16:50.535Z",
+    "__v": 0
+  }
   ```
 
 # IOT

@@ -6,4 +6,11 @@ const approveUserSchema = {
   }),
 };
 
-export default { approveUserSchema };
+const users = {
+  query: joi.object().keys({
+    role: joi.string().valid("farmer", "expert", "vendor").required(),
+    isApproved: joi.boolean().valid(true, false).required(),
+  }),
+};
+
+export default { approveUserSchema, users };

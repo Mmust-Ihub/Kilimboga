@@ -4,7 +4,7 @@ import { catchAsync } from "../utils/catchAsync.js";
 import httpStatus from "http-status";
 import moment from "moment";
 import { accountApprovalEmail } from "../utils/formatEmail.js";
-import { sendEmail } from "../utils/utils.js";
+import { allowList, blockList, sendEmail } from "../utils/utils.js";
 
 const adminStats = catchAsync(async (req, res) => {
   const pipeline = [
@@ -12,6 +12,7 @@ const adminStats = catchAsync(async (req, res) => {
       $facet: {
         totalUsers: [{ $count: "count" }],
         verifiedUsers: [{ $match: { isVerified: true } }, { $count: "count" }],
+        pendingApprovals: [{ $match: {isSpecial: true, isApproved: false}}, {$count: "count"}],
         approvedUsers: [{ $match: { isApproved: true } }, { $count: "count" }],
         specialUsers: [{ $match: { isSpecial: true } }, { $count: "count" }],
         roleDistribution: [{ $group: { _id: "$role", count: { $sum: 1 } } }],
@@ -55,4 +56,22 @@ const approveUser = catchAsync(async (req, res) => {
     .json({ status: "success", message: "Account approved successfully." });
 });
 
-export default { adminStats, approveUser };
+const getUsers = catchAsync(async(req, res)=> {
+  const filter = req.query
+  const allowedInfo = ["_id", "firstName", "lastName", "email", "location"]
+  let output = await userModel.find(filter).sort({createdAt: -1})
+  let users = []
+  output.forEach((user) => {
+    users.push(allowList(user, allowedInfo))
+  })
+  const totalCount = await userModel.countDocuments(filter)
+  return res.status(httpStatus.OK).json({totalCount, users})
+})
+
+const getUser = catchAsync(async(req, res) => {
+  const user = await userModel.findById(req.params.id).lean()
+  const blockedList = ["authCode", "createdAt", "updatedAt", "password"]
+  return res.status(httpStatus.OK).json(blockList(user, blockedList))
+})
+
+export default { adminStats, approveUser, getUsers, getUser };
