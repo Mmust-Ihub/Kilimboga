@@ -3,7 +3,7 @@ import { PiFarmFill } from "react-icons/pi";
 import { IoStatsChart } from "react-icons/io5";
 import { FaChevronRight } from "react-icons/fa";
 
-function Navbar({children}){
+function Navbar({children, user}){
     function logout(){
         sessionStorage.removeItem('token')
         sessionStorage.removeItem('user')
@@ -55,7 +55,7 @@ function Navbar({children}){
            
                  <div className='w-10/12 h-max ml-auto'>
                    <div className='py-6 px-10 border-b-1 border-gray-200 w-full flex items-center justify-between'>
-                       <h1 className='font-bold text-lg text-left'>Hello, Victor!</h1>
+                       <h1 className='font-bold text-lg text-left'>Hello,!</h1>
                        <div>
                            <button className='ring-1 ring-gray-300 rounded px-5 py-0.5 text-sm cursor-pointer' onClick={logout}>Logout</button>
                        </div>

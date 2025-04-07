@@ -55,7 +55,7 @@ function EditProductForm({name, description, category, price, qty,image,  id, sh
     const handleEdit = () => {
         // To do: edit fn
         setLoading(true)
-        db.editProduct(token, formData).then((res) => {
+        db.editProduct(token, {...formData, productId:id}).then((res) => {
             if (res.status) {
                 toast.success(res.message)
             }else{

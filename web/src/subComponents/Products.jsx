@@ -185,7 +185,7 @@ function Products(){
                                 </div>
                                 <button
                                     className="border-1 border-gray-300 mt-4 px-4 py-1 w-full cursor-pointer text-base hover:text-white bg-gray-100 hover:bg-gray-800 rounded"
-                                    onClick={() => showEditForm(product.title, product.description, product.category, product.price, product.quantity, product.image, product._id)}
+                                    onClick={() => showEditForm(product.title, product.description, product.category, product.price, product.quantity, product.imageUrl, product._id)}
                                 >
                                     Edit
                                 </button>

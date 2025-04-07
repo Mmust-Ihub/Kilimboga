@@ -1,6 +1,7 @@
 class Database {
     // baseUrl = 'https://db5rhc6r-3000.inc1.devtunnels.ms';
     baseUrl = 'https://kilimboga.vercel.app'
+    // baseUrl = 'https://db5rhc6r-3000.inc1.devtunnels.ms';
 
     async register(user){
         const formData = new FormData();
@@ -272,17 +273,13 @@ class Database {
         formData.append('quantity', product.productQuantity);
     
         try {
-            const res = await fetch(`${this.baseUrl}/api/v1/vendor/product`, {
+            const res = await fetch(`${this.baseUrl}/api/v1/vendor/product?id=${product.productId}`, {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
                 body: formData,
             });
-    
-            if (res.status !== 201) {
-                throw new Error('Failed to update the product');
-            }
     
             const resData = await res.json();
 
@@ -294,6 +291,7 @@ class Database {
                 data: resData,
             };
         } catch (err) {
+
             console.error(err);
     
             return {
@@ -360,6 +358,89 @@ class Database {
             return {
                 status: false,
                 message: `Error when fetching ${state} orders`,
+            }
+        }
+    }
+
+    // Admin
+    async getAdminStats(token){
+        try {
+            const res = await fetch(`${this.baseUrl}/api/v1/admin/stats`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+    
+            const resData = await res.json();
+    
+            return {
+                status: true,
+                message: `Stats fetched successfully`,
+                data: resData[0],
+            }
+        } catch (err) {
+            console.log(err);
+
+            return {
+                status: false,
+                message: `Error when fetching stats`,
+            }
+        }
+    }
+
+    async getAdminUsers(token, role, status){
+        try {
+            const res = await fetch(`${this.baseUrl}/api/v1/admin/users?role=${role}&isApproved=${status}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+    
+            const resData = await res.json();
+
+            console.log(resData)
+    
+            return {
+                status: true,
+                message: `Users fetched successfully`,
+                data: resData,
+            }
+        } catch (err) {
+            console.log(err);
+
+            return {
+                status: false,
+                message: `Error when fetching users`,
+            }
+        }
+    }
+
+    async getAdminUser(token, id){
+        try {
+            const res = await fetch(`${this.baseUrl}/api/v1/admin/user/${id}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+    
+            const resData = await res.json();
+
+            console.log(resData)
+    
+            return {
+                status: true,
+                message: `User fetched successfully`,
+                data: resData,
+            }
+        } catch (err) {
+            console.log(err);
+
+            return {
+                status: false,
+                message: `Error when fetching user`,
             }
         }
     }

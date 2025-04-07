@@ -22,6 +22,7 @@ function App() {
     totalRevenue: 0,
   })
   const [token, setToken] = useState(JSON.parse(sessionStorage.getItem('token')))
+  const [user, setUser] = useState(JSON.parse(sessionStorage.getItem('user')))
 
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"]
   let barData = Array.from({length:12}, () => 0)
@@ -44,6 +45,7 @@ function App() {
       if(!response.status){
         toast.error(response.message)
       }
+      console.log(response.data)
       setVendorStats(response.data)
     }
     toast.promise(getData(), {
@@ -89,13 +91,13 @@ function App() {
                           </div>
                           <div className='w-full flex flex-col justify-between items-end'>
                               <p className='text-sm font-semibold ml-3 text-gray-500'>Best Seller</p>
-                              <h1 className='text-2xl font-bold'>{vendorStats.bestSellingProducts.length > 0 ? vendorStats.bestSellingProducts.length[0].productName : "-"}</h1>
+                              <h1 className='text-2xl font-bold'>{vendorStats.bestSellingProducts.length > 0 ? vendorStats.bestSellingProducts[0].productName : "-"}</h1>
                           </div>
                       </div>
                       <div className='rounded bg-gray-300 w-full flex py-3 px-6 justify-between items-center mt-5'>
                           <div className='flex items-center'>
                               {/* <h1 className='text-xs text-green-800'>200%</h1> */}
-                              <h1 className='text-xs ml-2 font-semibold'>{vendorStats.bestSellingProducts.length > 0 ? vendorStats.bestSellingProducts.length[0].totalSold : 0} items sold</h1>
+                              <h1 className='text-xs ml-2 font-semibold'>{vendorStats.bestSellingProducts.length > 0 ? vendorStats.bestSellingProducts[0].totalSold : 0} items sold</h1>
                           </div>
                           <div className='flex items-center justify-center rounded-3xl p-1 bg-green-900 text-white text-xs cursor-pointer'>
                               <FaChevronRight />

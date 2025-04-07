@@ -25,12 +25,36 @@ import {
 import { LuCrown } from "react-icons/lu";
 import { useState } from 'react';
 import { useEffect } from 'react';
+import Database from '../js/db.js'
+import toast, { Toaster } from 'react-hot-toast';
+
+const db = new Database();
 
 function Admin(){
     const [showDashboard, setShowDashboard] = useState(true);
     const [showFarmers, setShowFarmers] = useState(false);
     const [showVendors, setShowVendors] = useState(false);
     const [currentPage, setCurrentPage] = useState('Dashboard');
+    const [token, setToken] = useState(JSON.parse(sessionStorage.getItem('token')));
+    const [user, setUser] = useState(JSON.parse(sessionStorage.getItem('user')));
+    const [adminStats, setAdminStats] = useState(
+        {
+          "totalUsers": [{ "count": 4 }],
+          "verifiedUsers": [{ "count": 4 }],
+          "pendingApprovals": [{ "count": 1 }],
+          "approvedUsers": [{ "count": 2 }],
+          "specialUsers": [{ "count": 3 }],
+          "roleDistribution": [
+            { "_id": "admin", "count": 1 },
+            { "_id": "farmer", "count": 1 },
+            { "_id": "vendor", "count": 2 }
+          ],
+          "recentUsers": [{ "count": 4 }],
+          "userGrowth": [
+            { "_id": 3, "count": 3 },
+            { "_id": 4, "count": 1 }
+          ]
+        })
 
     function nav(destination){
         switch(destination){
@@ -61,38 +85,62 @@ function Admin(){
         }
     }
 
+    useEffect(() => {
+        async function fetchData() {
+            const res = await db.getAdminStats(token);
+            console.log(res)
+            if (res.status) {
+                setAdminStats(res.data);
+            } else {
+                toast.error("Failed to fetch admin stats");
+            }
+        }
+        fetchData();
+    },[])
 
     const data = [
-        { name: 'Jan', sales: 10, userGrowth: 15 },
-        { name: 'Feb', sales: 20, userGrowth: 25 },
-        { name: 'Mar', sales: 30, userGrowth: 35 },
-        { name: 'Apr', sales: 40, userGrowth: 20 },
-        { name: 'May', sales: 50, userGrowth: 55 },
-        { name: 'Jun', sales: 60, userGrowth: 65 },
-        { name: 'Jul', sales: 70, userGrowth: 75 },
-        { name: 'Aug', sales: 80, userGrowth: 85 },
-        { name: 'Sept', sales: 90, userGrowth: 95 },
-        { name: 'Oct', sales: 100, userGrowth: 105 },
-        { name: 'Nov', sales: 110, userGrowth: 115 },
-        { name: 'Dec', sales: 120, userGrowth: 125 },
-      ];
+        { name: 'Jan', sales: 10, userGrowth: 0 },
+        { name: 'Feb', sales: 20, userGrowth: 0 },
+        { name: 'Mar', sales: 30, userGrowth: 0 },
+        { name: 'Apr', sales: 40, userGrowth: 0 },
+        { name: 'May', sales: 50, userGrowth: 0 },
+        { name: 'Jun', sales: 60, userGrowth: 0 },
+        { name: 'Jul', sales: 70, userGrowth: 0 },
+        { name: 'Aug', sales: 80, userGrowth: 0 },
+        { name: 'Sept', sales: 90, userGrowth: 0 },
+        { name: 'Oct', sales: 100, userGrowth: 0 },
+        { name: 'Nov', sales: 110, userGrowth: 0 },
+        { name: 'Dec', sales: 120, userGrowth: 0 },
+    ];
 
-      const usersComposition = [
+    const usersComposition = [
         {
-          "name": "Farmers",
+          "name": "farmer",
           "population": 100,
           "fill": "#8884d8",
         },
         {
-          "name": "Vendos",
+          "name": "vendor",
           "population": 10,
           "fill": "#82ca9d",
         },
         {
-          "name": "Experts",
-          "population": 50,
+          "name": "experts",
+          "population": 5,
         "fill": "#ffc658",
-        },]
+    },]
+
+    adminStats.userGrowth.length > 0 && adminStats.userGrowth.forEach((item, index) => {
+        data[item._id].userGrowth = item.count;
+    })
+
+    adminStats.roleDistribution.length > 0 && adminStats.roleDistribution.forEach((item)=>{
+        usersComposition.filter(x => x.name.toLowerCase() == item._id).length > 0 
+            ? usersComposition.filter(x => x.name.toLowerCase() == item._id)[0].population = item.count
+            : ""
+    })
+
+      
 
     return (
         <div className=' bg-gray-100 flex' style={{height: '100vh'}}>
@@ -131,7 +179,7 @@ function Admin(){
 
             <div className='w-11/12'>
                 <div className='py-6 px-10 border-b-1 border-gray-200 w-full flex items-center justify-between'>
-                    <h1 className='font-bold text-lg text-left'>Hello, Victor!</h1>
+                    <h1 className='font-bold text-lg text-left'>Hello, {user.firstName}!</h1>
                     <div>
                         <button className='ring-1 ring-gray-300 rounded px-5 py-0.5 text-sm cursor-pointer'>Logout</button>
                     </div>
@@ -154,7 +202,7 @@ function Admin(){
                                 </div>
                                 <div className='w-full flex flex-col justify-between items-end'>
                                     <p className='text-sm font-semibold ml-3 text-gray-500'>Total Users</p>
-                                    <h1 className='text-2xl font-bold'>20</h1>
+                                    <h1 className='text-2xl font-bold'>{adminStats.totalUsers[0].count}</h1>
                                 </div>
                             </div>
                             <div className='rounded bg-gray-300 w-full flex py-3 px-6 justify-between items-center mt-5'>
@@ -175,7 +223,7 @@ function Admin(){
                                 </div>
                                 <div className='w-full flex flex-col justify-between items-end'>
                                     <p className='text-sm font-semibold ml-3 text-gray-500'>Verified Users</p>
-                                    <h1 className='text-2xl font-bold'>20</h1>
+                                    <h1 className='text-2xl font-bold'>{adminStats.verifiedUsers[0].count}</h1>
                                 </div>
                             </div>
                             <div className='rounded bg-gray-300 w-full flex py-3 px-6 justify-between items-center mt-5'>
@@ -196,7 +244,7 @@ function Admin(){
                                 </div>
                                 <div className='w-full flex flex-col justify-between items-end'>
                                     <p className='text-sm font-semibold ml-3 text-gray-500'>Pending Approvals</p>
-                                    <h1 className='text-2xl font-bold'>20</h1>
+                                    <h1 className='text-2xl font-bold'>{}</h1>
                                 </div>
                             </div>
                             <div className='rounded bg-gray-300 w-full flex py-3 px-6 justify-between items-center mt-5'>
@@ -217,7 +265,7 @@ function Admin(){
                                 </div>
                                 <div className='w-full flex flex-col justify-between items-end'>
                                     <p className='text-sm font-semibold ml-3 text-gray-500'>Recent Users</p>
-                                    <h1 className='text-2xl font-bold'>20</h1>
+                                    <h1 className='text-2xl font-bold'>{adminStats.recentUsers[0].count}</h1>
                                 </div>
                             </div>
                             <div className='rounded bg-gray-300 w-full flex py-3 px-6 justify-between items-center mt-5'>
@@ -238,7 +286,7 @@ function Admin(){
                                 </div>
                                 <div className='w-full flex flex-col justify-between items-end'>
                                     <p className='text-sm font-semibold ml-3 text-gray-500'>Special Users</p>
-                                    <h1 className='text-2xl font-bold'>20</h1>
+                                    <h1 className='text-2xl font-bold'>{adminStats.specialUsers[0].count}</h1>
                                 </div>
                             </div>
                             <div className='rounded bg-gray-300 w-full flex py-3 px-6 justify-between items-center mt-5'>
@@ -372,7 +420,7 @@ function Admin(){
                     </div>
                 ) : (null)}
             </div>
-           
+            <Toaster />
         </div>
     );
 }
