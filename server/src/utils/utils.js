@@ -83,3 +83,11 @@ export const getLocation = async (longitude, latitude) => {
   });
   return response.data;
 };
+
+export const formatPhoneNumber = (phoneNumber) => {
+  if (phoneNumber.startsWith('0')) {
+    return '254' + phoneNumber.substring(1);
+  } else {
+    return '254' + phoneNumber;
+  }
+}

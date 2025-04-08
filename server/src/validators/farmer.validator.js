@@ -33,4 +33,10 @@ const products = {
   })
 }
 
-export default { AddGreenHouseSchema, predictSchema, connect, products };
+const orders = {
+  query: joi.object().keys({
+    status: joi.string().valid("pending", "delivered").default("all")
+  })
+}
+
+export default { AddGreenHouseSchema, predictSchema, connect, products, orders };

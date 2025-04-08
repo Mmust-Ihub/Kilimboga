@@ -15,6 +15,7 @@ import allRoles from "../config/roles.js";
 import productModel from "../models/product.model.js";
 import { userModel } from "../models/user.model.js";
 import uploadFile from "../helpers/uploadFile.js";
+import orderModel from "../models/order.model.js";
 
 const famerProfile = catchAsync(async (req, res) => {
   const profile = allowList(req.user, [
@@ -91,7 +92,10 @@ const getProducts = catchAsync(async (req, res) => {
   let { page = 1, perPage = 10, category } = req.query;
   page = parseInt(page);
   perPage = parseInt(perPage);
-  const filter = category ? { category } : {};
+  const filter = {
+    ...(category && { category }),
+    quantity: { $gte: 1 },
+  };
   const products = await productModel
     .find(filter)
     .sort({ createdAt: -1 })
@@ -127,6 +131,34 @@ const requestToBeExpert = catchAsync(async (req, res) => {
   });
 });
 
+const orderProducts = catchAsync(async (req, res) => {
+  const {CheckoutRequestID } = await farmerService.initiateCheckout(req.user, req.body);
+  await farmerService.processOrders(req.user, req.body, CheckoutRequestID);
+  return res.status(httpStatus.OK).json({"message": "order placed successfully"});
+});
+
+const getOrders = catchAsync(async(req, res) => {
+  const deliveryStatus = req.query.status
+  if(deliveryStatus !== "all"){
+    const orders = await orderModel.find({deliveryStatus}).sort({orderedAt: -1})
+    const ordersCount = await orderModel.countDocuments({deliveryStatus})
+    return res.status(httpStatus.OK).json({ordersCount, orders})
+  }
+  const orders = await orderModel.find().sort({orderedAt: -1})
+  const ordersCount = await orderModel.countDocuments()
+  return res.status(httpStatus.OK).json({ordersCount, orders})
+})
+
+const updateOrder = catchAsync(async(req, res) => {
+  const order = await orderModel.findById(req.params.id)
+  if(!order){
+    throw new ApiError(404, "The order does not exist")
+  }
+  order.deliveryStatus = "delivered"
+  await order.save()
+  return res.status(httpStatus.OK).json({"message": "order updated successfully."})
+})
+
 export default {
   famerProfile,
   farmerStats,
@@ -136,4 +168,7 @@ export default {
   getProducts,
   getExperts,
   requestToBeExpert,
+  orderProducts,
+  getOrders,
+  updateOrder
 };

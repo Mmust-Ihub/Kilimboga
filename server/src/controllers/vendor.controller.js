@@ -6,6 +6,7 @@ import { ApiError } from "../utils/APiError.js";
 import { allowList } from "../utils/utils.js";
 import vendorService from "../services/vendor.service.js";
 import orderModel from "../models/order.model.js";
+import { userModel } from "../models/user.model.js";
 
 const getStats = catchAsync(async (req, res) => {
   const data = await vendorService.stats(req.user.id);
@@ -23,7 +24,16 @@ const getProfile = catchAsync(async (req, res) => {
   return res.status(httpStatus.OK).json(user);
 });
 
-const editProfile = catchAsync(async (req, res) => {});
+const editProfile = catchAsync(async (req, res) => {
+  if (!req.files?.length === 0) {
+    req.body.imageUrl = await uploadFile(req.files[0]);
+  }
+  const updatedUser = await userModel.findByIdAndUpdate(req.user.id, {$set: req.body}, {new: true, runValidators: true})
+  if(!updatedUser){
+    return res.status(httpStatus.NOT_FOUND).json({ message: "User not found."})
+  }
+  return res.status(httpStatus.ACCEPTED).json(updatedUser)
+});
 
 const addProduct = catchAsync(async (req, res) => {
   req.body.vendorId = req.user.id;
@@ -52,7 +62,6 @@ const getProducts = catchAsync(async (req, res) => {
 });
 
 const editProduct = catchAsync(async (req, res) => {
-  console.log(req.body)
   if (!req.files?.length === 0) {
     req.body.imageUrl = await uploadFile(req.files[0]);
   }

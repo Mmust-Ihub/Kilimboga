@@ -17,6 +17,10 @@ const paymentSchema = mongoose.Schema(
       ref: "User",
       required: true,
     },
+    checkoutRequestId: {
+      type: String,
+      required: true,
+    },
     amount: { type: Number, required: true },
     status: {
       type: String,
@@ -29,11 +33,10 @@ const paymentSchema = mongoose.Schema(
       default: "mpesa",
       required: true,
     },
-    transactionId: { type: String, unique: true, required: true },
     createdAt: { type: Date, default: Date.now() },
   },
   { timestamps: true }
 );
 
 const paymentModel = mongoose.model("Payment", paymentSchema);
-export default paymentModel
+export default paymentModel;

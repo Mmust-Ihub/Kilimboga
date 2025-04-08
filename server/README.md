@@ -332,33 +332,6 @@ url: {{base_url}}/api/v1/farmer/predict?type=pest
   ]
   ```
 
-## Nearby Experts.
-
-> > **request**
-
-- **_url_**: `{{base_url}}/api/v1/farmer/experts`
-- **_method:_** `GET`
-- **_headers:_**
-
-  - Authorization: Bearer **token**
-
-> > **example response**
-
-- ```json
-  [
-    {
-      "_id": "67dc5d07bb2d7175a2b4d65e",
-      "firstName": "John",
-      "lastName": "Doe",
-      "email": "johndoe@gmail.com",
-      "phoneNumber": "0712345678",
-      "location": {
-        "coordinates": [34.75229, 0.28422]
-      }
-    }
-  ]
-  ```
-
 ## Request to be an Expert.
 
 > > **request**
@@ -375,6 +348,70 @@ url: {{base_url}}/api/v1/farmer/predict?type=pest
   {
     "status": "success",
     "message": "Your request has been received for processing."
+  }
+  ```
+
+## Order products.
+
+> > **request**
+
+- **_url_**: `{{base_url}}/api/v1/farmer/order`
+- **_method:_** `POST`
+- **_headers:_**
+
+  - Authorization: Bearer **token**
+
+- **_request body:_**
+- ```json
+  {
+    "products": [
+      {
+        "productId": "67ea91a1a14e9f9b37adeee8",
+        "quantity": 3,
+        "price": 1,
+        "amount": 4,
+        "vendorId": "67dedfaccb902e8624c91e68"
+      }
+    ],
+    "address": "Kakamega",
+    "totalAmount": 1
+  }
+  ```
+
+## Get Orders.
+
+> > **request**
+
+- **_url_**: `{{base_url}}/api/v1/farmer/orders`
+- **_method:_** `GET`
+- **_headers:_**
+
+  - Authorization: Bearer **token**
+
+- **_Required query parameters:_**
+
+  | Parameter |  Type  |        options         | default |
+  | :-------: | :----: | :--------------------: | :-----: |
+  |  status   | string | _pending_, _delivered_ |   all   |
+
+## Update order status.
+
+> > **request**
+
+- **_url_**: `{{base_url}}/api/v1/farmer/orders/{{id}}`
+- **_method:_** `PATCH`
+- **_headers:_**
+
+  - Authorization: Bearer **token**
+
+> > **response**
+
+- **_status code_**: `200`
+- **_response body_**:
+
+- ```json
+  {
+    "message": "order updated successfully."
   }
   ```
 
@@ -424,6 +461,19 @@ url: {{base_url}}/api/v1/farmer/predict?type=pest
     "phoneNumber": "0712345678",
     "imageUrl": null "(profile image)"
   }
+  ```
+
+> ## Edit Profile
+>
+> > **request**
+
+- **_url_**: `{{base_url}}/api/v1/vendor/profile`
+- **_method:_** `PATCH`
+- **_headers:_**
+  - Authorization: Bearer **token**
+- **_request body:_** _(form data)_
+- ```json
+   "keys": "values of the final profile",
   ```
 
 > ## Add Product
