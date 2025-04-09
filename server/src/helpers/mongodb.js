@@ -25,7 +25,7 @@ export const connectToMongoDB = async () => {
       logger.info("Mongoose disconnected from mongoDB");
     });
   } catch (error) {
-    logger.error("Error connecting to MongoDB:", error.message);
+    logger.error("Error connecting to MongoDB:", error);
   }
 };
 

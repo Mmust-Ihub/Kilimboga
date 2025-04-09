@@ -49,6 +49,9 @@ const login = catchAsync(async (req, res) => {
   if (!user.isVerified) {
     throw new ApiError(httpStatus.UNAUTHORIZED, "Please verify your account.");
   }
+  if (user.isSuspended) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, "Your account has been suspended.");
+  }
 
   if(user.isSpecial && !user.isApproved){
     throw new ApiError(httpStatus.UNAUTHORIZED, "You account is waiting for approval.");
