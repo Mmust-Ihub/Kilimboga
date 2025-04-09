@@ -5,7 +5,7 @@ import Database from "../js/db.js";
 
 const db = new Database();
 
-function AdminVendors() {
+function AdminExperts() {
   const [showTable, setShowTable] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -19,7 +19,7 @@ function AdminVendors() {
       coordinates: [34.75229, 0.28422],
       _id: "67dc5d07bb2d7175a2b4d65f",
     },
-    role: "expert",
+    role: "farmer",
     isVerified: true,
     isSpecial: true,
     isApproved: true,
@@ -55,7 +55,7 @@ function AdminVendors() {
       name: "",
       cell: (row) => (
         <button
-          className="bg-gray-500 cursor-pointer text-white rounded-full px-4 py-2 text-xs lg:text-sm"
+          className="bg-gray-500 cursor-pointer text-white rounded-full px-4 py-2"
           onClick={async () => {
             const res = await db.getAdminUser(token, row.id);
             setFormData(res.data);
@@ -69,7 +69,6 @@ function AdminVendors() {
     },
   ]);
   const [approved, setApproved] = useState(true);
-  const [fontSize, setFontSize] = useState(12);
 
   function showTableFn() {
     setShowTable(true);
@@ -81,11 +80,9 @@ function AdminVendors() {
     setShowForm(true);
   }
 
-  const t = true;
-
   useEffect(() => {
     async function getData() {
-      const res = await db.getAdminUsers(token, "vendor", approved);
+      const res = await db.getAdminUsers(token, "expert", approved);
       console.log(res);
       setTdata(
         res.data.users.map((item) => {
@@ -99,13 +96,12 @@ function AdminVendors() {
       );
     }
     getData();
-  }, [t]);
+  }, []);
 
   const customStyles = {
     header: {
       style: {
         minHeight: "56px",
-        // fontSize: `${fontSize + 8}px`,
       },
     },
     headRow: {
@@ -121,7 +117,7 @@ function AdminVendors() {
           borderRightStyle: "solid",
           borderRightWidth: "1px",
           borderRightColor: "#D1D5DB",
-          //   fontSize: `${fontSize + 2}px`,
+          //   fontSize: "14px",
           paddingTop: "10px",
           paddingBottom: "10px",
         },
@@ -135,13 +131,13 @@ function AdminVendors() {
           borderRightColor: "#D1D5DB",
           paddingTop: "15px",
           paddingBottom: "15px",
-          //   fontSize: `${fontSize + 2}px`,
+          //   fontSize: "14px",
         },
       },
     },
   };
 
-  const handleVendorEditForm = (e) => {
+  const handleFarmerEditForm = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
 
@@ -153,7 +149,7 @@ function AdminVendors() {
     });
   };
 
-  const handleVendor = (action) => {
+  const handleFarmer = (action) => {
     switch (action) {
       case "approve":
         // TO DO: approve vendor
@@ -176,17 +172,15 @@ function AdminVendors() {
   return (
     <>
       {showTable ? (
-        <div className="bg-gray-100 w-full">
-          <div className="lg:px-5 py-5 bg-white">
-            <DataTable
-              className=""
-              columns={columns}
-              data={tdata}
-              pagination
-              customStyles={customStyles}
-              dense
-            />
-          </div>
+        <div className="lg:px-10 py-5 bg-white">
+          <DataTable
+            className=""
+            columns={columns}
+            data={tdata}
+            pagination
+            customStyles={customStyles}
+            dense
+          />
         </div>
       ) : null}
 
@@ -198,27 +192,18 @@ function AdminVendors() {
           >
             <IoMdArrowRoundBack />
           </button>
-
           <div className="mt-3 mx-10 ring-1 ring-gray-300 p-5 rounded">
-            <h3 className="text-base font-semibold">Documents</h3>
-            <ol className="mb-3">
-              <li>
-                <a
-                  href={formData.documents}
-                  className="text-sm cursor-pointer text-blue-600"
-                  target="_blank"
-                >
-                  KRA certificate
-                </a>
-              </li>
-            </ol>
+            {/* <h3 className='text-base font-semibold'>Documents</h3>
+                    <ol className='mb-3'>
+                        <li><a href={formData.documents} className='text-sm cursor-pointer text-blue-600'>KRA certificate</a></li>
+                    </ol> */}
 
             <form className="w-full grid grid-cols-2 gap-4 text-sm" action="">
               <div className="flex flex-col">
                 <label htmlFor="firstName">First Name</label>
                 <input
                   value={formData.firstName}
-                  onChange={handleVendorEditForm}
+                  onChange={handleFarmerEditForm}
                   className="rounded p-1 px-3 mt-2 border-1 border-gray-300 outline-0"
                   type="text"
                   id="firstName"
@@ -231,7 +216,7 @@ function AdminVendors() {
                 <label htmlFor="lastName">Last Name</label>
                 <input
                   value={formData.lastName}
-                  onChange={handleVendorEditForm}
+                  onChange={handleFarmerEditForm}
                   className="rounded p-1 px-3 mt-2 border-1 border-gray-300 outline-0"
                   type="text"
                   id="lastName"
@@ -244,7 +229,7 @@ function AdminVendors() {
                 <label htmlFor="email">Email</label>
                 <input
                   value={formData.email}
-                  onChange={handleVendorEditForm}
+                  onChange={handleFarmerEditForm}
                   className="rounded p-1 px-3 mt-2 border-1 border-gray-300 outline-0"
                   type="text"
                   id="email"
@@ -257,7 +242,7 @@ function AdminVendors() {
                 <label htmlFor="phoneNumber">Phone Number</label>
                 <input
                   value={formData.phoneNumber}
-                  onChange={handleVendorEditForm}
+                  onChange={handleFarmerEditForm}
                   className="rounded p-1 px-3 mt-2 border-1 border-gray-300 outline-0"
                   type="text"
                   id="phoneNumber"
@@ -270,7 +255,7 @@ function AdminVendors() {
                 <label htmlFor="longitude">Longitude</label>
                 <input
                   value={formData.location.coordinates[1]}
-                  onChange={handleVendorEditForm}
+                  onChange={handleFarmerEditForm}
                   className="rounded p-1 px-3 mt-2 border-1 border-gray-300 outline-0"
                   type="text"
                   id="longitude"
@@ -283,7 +268,7 @@ function AdminVendors() {
                 <label htmlFor="latitude">Latitude</label>
                 <input
                   value={formData.location.coordinates[0]}
-                  onChange={handleVendorEditForm}
+                  onChange={handleFarmerEditForm}
                   className="rounded p-1 px-3 mt-2 border-1 border-gray-300 outline-0"
                   type="text"
                   id="latitude"
@@ -292,14 +277,21 @@ function AdminVendors() {
                 <p className="error text-red-500 mt-2"></p>
               </div>
 
-              <div className="flex flex-col">
+              <div
+                className={
+                  formData.role == "farmer"
+                    ? "flex flex-col text-gray-500"
+                    : "flex flex-col"
+                }
+              >
                 <label htmlFor="documents">Supporting document</label>
                 <input
-                  className="rounded p-1 px-3 mt-2 border-1 border-gray-300 outline-0"
+                  className="rounded cursor-pointer p-1 px-3 mt-2 border-1 border-gray-300 outline-0"
                   type="file"
                   id="documents"
                   name="documents"
                   accept="jpg"
+                  disabled={formData.role == "farmer" ? true : false}
                 />
                 <p className="error text-red-500 mt-2"></p>
               </div>
@@ -308,7 +300,7 @@ function AdminVendors() {
                 <label htmlFor="role">Role</label>
                 <select
                   value={formData.role}
-                  onChange={handleVendorEditForm}
+                  onChange={handleFarmerEditForm}
                   className="rounded p-1 px-3 mt-2 border-1 border-gray-300 outline-0"
                   name="role"
                   id="role"
@@ -323,7 +315,7 @@ function AdminVendors() {
             <div className="flex justify-between items-center">
               <button
                 onClick={() => {
-                  handleVendor("delete");
+                  handleFarmer("delete");
                 }}
                 className="mt-5 px-6 py-1 cursor-pointer bg-red-800 hover:bg-red-700 text-white text-sm rounded"
               >
@@ -332,7 +324,7 @@ function AdminVendors() {
               <div>
                 <button
                   onClick={() => {
-                    handleVendor("suspend");
+                    handleFarmer("suspend");
                   }}
                   className="mt-5 mr-5 px-6 py-1 cursor-pointer bg-gray-800 hover:bg-gray-700 text-white text-sm rounded"
                 >
@@ -340,7 +332,7 @@ function AdminVendors() {
                 </button>
                 <button
                   onClick={() => {
-                    handleVendor("approve");
+                    handleFarmer("approve");
                   }}
                   className="mt-5 px-6 py-1 cursor-pointer bg-green-800 hover:bg-green-700 text-white text-sm rounded"
                 >
@@ -355,4 +347,4 @@ function AdminVendors() {
   );
 }
 
-export default AdminVendors;
+export default AdminExperts;

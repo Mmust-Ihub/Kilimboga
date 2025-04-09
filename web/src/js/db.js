@@ -384,7 +384,7 @@ class Database {
             return {
                 status: true,
                 message: `Stats fetched successfully`,
-                data: resData[0],
+                data: resData,
             }
         } catch (err) {
             console.log(err);
@@ -411,7 +411,7 @@ class Database {
     
             return {
                 status: true,
-                message: `Users fetched successfully`,
+                message: `${role} ${status} Users fetched successfully`,
                 data: resData,
             }
         } catch (err) {
@@ -419,7 +419,7 @@ class Database {
 
             return {
                 status: false,
-                message: `Error when fetching users`,
+                message: `Error when fetching ${role} ${status} users`,
             }
         }
     }
