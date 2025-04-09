@@ -158,12 +158,12 @@ function SignUp() {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-            <div className='bg-white py-10 px-8 rounded shadow-md w-3/6 flex flex-col items-center'>
-                <h2 className="text-2xl font-bold mb-8">Kilimboga Agrovet Sign Up</h2>
+            <div className='bg-white py-10 px-4 lg:px-8 rounded shadow-md w-11/12 lg:w-3/6 flex flex-col items-center'>
+                <h2 className="text-xl lg:text-2xl font-bold mb-8">Kilimboga Vendor Sign Up</h2>
 
                {showSignUp && ( 
                     <>
-                        <form onSubmit={handleSubmit} className="w-full grid gap-x-4 gap-y-0 grid-cols-2">
+                        <form onSubmit={handleSubmit} className="w-full grid gap-x-4 gap-y-0 grid-cols-1 lg:grid-cols-2 text-sm lg:text-base">
                             <div className="mb-4">
                                 <label className="block text-gray-400 mb-3">First Name</label>
                                 <input
@@ -253,7 +253,7 @@ function SignUp() {
                         <button 
                             type='submit'
                             onClick={handleSubmit} 
-                            className={`w-full cursor-pointer mt-3 bg-green-800 text-white py-2 rounded flex items-center justify-center ${
+                            className={`w-full cursor-pointer mt-3 bg-green-800 text-white py-2 rounded flex items-center justify-center text-sm lg:text-base ${
                                 loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-green-800 hover:bg-green-700'
                             }`}
                             disabled={loading}
@@ -265,7 +265,7 @@ function SignUp() {
                 
                 {showOtp && (
                     <>
-                        <form onSubmit={handleSubmit} className="w-full grid gap-x-4 gap-y-0 grid-cols-1">
+                        <form onSubmit={handleSubmit} className="w-full grid gap-x-4 gap-y-0 grid-cols-1 text-sm lg:text-base">
                             <div className="mb-4">
                                 <label className="block text-gray-400 mb-3">Enter OTP sent to your email</label>
                                 <input
@@ -281,9 +281,6 @@ function SignUp() {
                                 <p className='error text-red-500 mt-1'></p>
                             </div>
                         </form>
-                        {/* <button type="submit" onClick={handleOtpSubmit} className="w-full cursor-pointer mt-3 bg-gray-800 text-white py-2 rounded">
-                            {loading ? 'Loading...' : 'Verify'}
-                        </button> */}
                         <button 
                             type='submit'
                             onClick={handleOtpSubmit} 
@@ -297,7 +294,7 @@ function SignUp() {
                     </>
                    )}
 
-                <h1 className='mt-3 text-gray-400'>Don't have an account? Go to <a href="/login" className='underline underline-offset-8'>Login</a> </h1>
+                <h1 className='mt-3 text-gray-400 text-sm lg:text-base'>Don't have an account? Go to <a href="/login" className='underline underline-offset-8'>Login</a> </h1>
             </div>
            <Toaster />
         </div>

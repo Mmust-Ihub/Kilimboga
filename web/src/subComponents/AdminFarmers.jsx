@@ -1,32 +1,37 @@
 import DataTable from 'react-data-table-component';
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { IoMdArrowRoundBack } from "react-icons/io";
+import Database from '../js/db.js'
+
+const db = new Database()
 
 function AdminFarmers(){
     const [showTable, setShowTable] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phoneNumber: '',
-        longitude: '',
-        latitude: '',
-        documents: '',
-        role: 'farmer',
+        "_id": "67dc5d07bb2d7175a2b4d65e",
+        "firstName": "John",
+        "lastName": "Doe",
+        "email": "johndoe@gmail.com",
+        "phoneNumber": "0712345678",
+        "location": {
+          "type": "Point",
+          "coordinates": [34.75229, 0.28422],
+          "_id": "67dc5d07bb2d7175a2b4d65f"
+        },
+        "role": "expert",
+        "isVerified": true,
+        "isSpecial": true,
+        "isApproved": true,
+        "documents": "https://res.cloudinary.com/dqrw1zi7d/image/upload/v1742494984/kilimboga/iajwnt3lyvxro1vuprvg.pdf",
+        "imageUrl": null,
+        "joined": "2025-03-20T18:16:50.535Z",
+        "__v": 0
     });
 
-    function showTableFn(){
-        setShowTable(true)
-        setShowForm(false)
-    }
-
-    function showFormFn(){
-        setShowTable(false)
-        setShowForm(true)
-    }
-
-    const columns = [
+    const [token, setToken] = useState(JSON.parse(sessionStorage.getItem('token')))
+    const [tdata, setTdata] = useState([])
+    const [columns, setColumns] = useState([
         {
             name: 'First Name',
             selector: row => row.firstName,
@@ -40,23 +45,8 @@ function AdminFarmers(){
             selector: row => row.email,
         },
         {
-            name: 'Password',
-            selector: row => row.password,
-            omit: true
-        },
-        {
-            name: 'Phone Number',
-            selector: row => row.phoneNumber,
-            omit: true
-        },
-        {
-            name: 'Long',
-            selector: row => row.longitude,
-            omit: true
-        },
-        {
-            name: 'Lat',
-            selector: row => row.latitude,
+            name: 'id',
+            selector: row => row.id,
             omit: true
         },
         {
@@ -64,17 +54,9 @@ function AdminFarmers(){
             cell: row => (
                 <button
                     className='bg-gray-500 cursor-pointer text-white rounded-full px-4 py-2'
-                    onClick={() => {
-                        setFormData({
-                            firstName: row.firstName,
-                            lastName: row.lastName,
-                            email: row.email,
-                            phoneNumber: row.phoneNumber,
-                            longitude: row.longitude,
-                            latitude: row.latitude,
-                            documents: row.documents,
-                            role: 'vendor',
-                        })
+                    onClick={async () => {
+                        const res = await db.getAdminUser(token, row.id)
+                        setFormData(res.data)
                         showFormFn()
                     }}
                 >
@@ -83,31 +65,36 @@ function AdminFarmers(){
             ),
             selector: row => row.action,
         },
-    ];
-    
-    const tdata = [
-        {
-            firstName: 'Victor',
-            lastName: 'Wanyungu',
-            email: 'vwanyungu254@gmail.com',
-            phoneNumber: '0706518167',
-            longitude: '12.8',
-            latitude: '12.8',
-            documents: "https://example.com/documents",
-            role: 'vendor'
-        },
-        {
-            firstName: 'Victor',
-            lastName: 'Wanyungu',
-            email: 'vwanyungu254@gmail.com',
-            phoneNumber: '0706518167',
-            longitude: '12.8',
-            latitude: '12.8',
-            documents: "https://example.com/documents",
-            role: 'vendor'
-        },
-    ]
+    ])
+    const [approved, setApproved] = useState(true)
 
+    function showTableFn(){
+        setShowTable(true)
+        setShowForm(false)
+    }
+
+    function showFormFn(){
+        setShowTable(false)
+        setShowForm(true)
+    }
+
+     useEffect(()=>{
+        async function getData(){
+            const res = await db.getAdminUsers(token, 'farmer', approved)
+            console.log(res)
+            setTdata( res.data.users.map((item)=>{
+                return {
+                    firstName: item.firstName,
+                    lastName: item.lastName,
+                    email: item.email,
+                    id: item._id
+                }
+            })) 
+        }
+        getData()
+    },[])
+
+   
     const [selectedRows, setSelectedRows] = useState([]);
     const [toggleCleared, setToggleCleared] = useState(false);
     const [data, setData] = useState(tdata);
@@ -263,19 +250,13 @@ function AdminFarmers(){
 
                         <div className="flex flex-col">
                             <label htmlFor="longitude">Longitude</label>
-                            <input value={formData.longitude} onChange={handleFarmerEditForm} className="rounded p-1 px-3 mt-2 border-1 border-gray-300 outline-0" type="text" id="longitude" name="longitude" />
+                            <input value={formData.location.coordinates[1]} onChange={handleFarmerEditForm} className="rounded p-1 px-3 mt-2 border-1 border-gray-300 outline-0" type="text" id="longitude" name="longitude" />
                             <p className="error text-red-500 mt-2"></p>
                         </div>
 
                         <div className="flex flex-col">
                             <label htmlFor="latitude">Latitude</label>
-                            <input value={formData.latitude} onChange={handleFarmerEditForm} className="rounded p-1 px-3 mt-2 border-1 border-gray-300 outline-0" type="text" id="latitude" name="latitude" />
-                            <p className="error text-red-500 mt-2"></p>
-                        </div>
-
-                        <div className="flex flex-col">
-                            <label htmlFor="latitude">Latitude</label>
-                            <input value={formData.latitude} onChange={handleFarmerEditForm} className="rounded p-1 px-3 mt-2 border-1 border-gray-300 outline-0" type="text" id="latitude" name="latitude" />
+                            <input value={formData.location.coordinates[0]} onChange={handleFarmerEditForm} className="rounded p-1 px-3 mt-2 border-1 border-gray-300 outline-0" type="text" id="latitude" name="latitude" />
                             <p className="error text-red-500 mt-2"></p>
                         </div>
 
@@ -290,6 +271,7 @@ function AdminFarmers(){
                             <select value={formData.role} onChange={handleFarmerEditForm} className="rounded p-1 px-3 mt-2 border-1 border-gray-300 outline-0" name="role" id="role">
                                 <option value="vendor">Vendor</option>
                                 <option value="farmer">Farmer</option>
+                                <option value="expert">Expert</option>
                             </select>
                             <p className="error text-red-500 mt-2"></p>
                         </div>
