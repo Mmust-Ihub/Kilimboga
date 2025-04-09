@@ -40,8 +40,8 @@ const predictDisease = async (file) => {
   throw new ApiError(400, "No disease detected");
 };
 
-const initiateCheckout = async (user, orders) => {
-  const phoneNumber = formatPhoneNumber(user.phoneNumber);
+const initiateCheckout = async (orders) => {
+  const phoneNumber = formatPhoneNumber(orders.phoneNumber);
   const { products, totalAmount } = orders;
   if (!products || products.length === 0) {
     throw new ApiError(400, "No products in the cart.");

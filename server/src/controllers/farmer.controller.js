@@ -132,7 +132,7 @@ const requestToBeExpert = catchAsync(async (req, res) => {
 });
 
 const orderProducts = catchAsync(async (req, res) => {
-  const {CheckoutRequestID } = await farmerService.initiateCheckout(req.user, req.body);
+  const {CheckoutRequestID } = await farmerService.initiateCheckout(req.body);
   await farmerService.processOrders(req.user, req.body, CheckoutRequestID);
   return res.status(httpStatus.OK).json({"message": "order placed successfully"});
 });
