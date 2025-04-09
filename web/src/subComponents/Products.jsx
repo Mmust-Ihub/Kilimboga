@@ -163,10 +163,10 @@ function Products(){
                     <div className='mx-5 lg:mx-10 mt-3 lg:mt-5 flex justify-between items-center'>
                     <h1 className="font-semibold text-base lg:text-lg" >Products</h1>
                     <div>
-                        <button onClick={showAddForm} title='Add product' className="mr-2 lg:mr-4 p-1.5 lg:px-6 lg:py-1 cursor-pointer bg-green-800 hover:bg-green-700 text-white text-base lg:text-sm rounded">
+                        <button onClick={showAddForm} title='Add product' className="mr-2 lg:mr-4 p-1.5 lg:px-6 lg:py-1 cursor-pointer bg-green-800 hover:bg-green-700 text-white text-base lg:text-lg rounded">
                             <IoMdAdd />
                         </button>
-                        <button onClick={showView} title='View products' className="p-1.5 lg:px-6 lg:py-1 cursor-pointer bg-green-800 hover:bg-green-700 text-white text-base lg:text-sm rounded">
+                        <button onClick={showView} title='View products' className="p-1.5 lg:px-6 lg:py-1 cursor-pointer bg-green-800 hover:bg-green-700 text-white text-base lg:text-lg rounded">
                             <MdGridView />
                         </button>
                     </div>
