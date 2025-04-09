@@ -23,6 +23,10 @@ const orderSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
+    checkoutRequestId: {
+      type: String,
+      required: true,
+    },
     paymentStatus: {
       type: String,
       enum: ["pending", "completed", "failed"],
@@ -38,6 +42,11 @@ const orderSchema = mongoose.Schema(
       type: String,
       enum: ["pending", "shipped", "delivered"],
       default: "pending",
+    },
+    orderAddress: {
+      type: String,
+      trim: true,
+      required: true,
     },
     orderedAt: { type: Date, default: Date.now() },
   },

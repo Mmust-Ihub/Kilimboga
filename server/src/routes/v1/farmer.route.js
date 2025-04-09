@@ -14,5 +14,8 @@ farmerRouter.get("/products", validate(farmerValidator.products), authenticate, 
 farmerRouter.get("/experts", authenticate, farmerController.getExperts)
 farmerRouter.post("/apply/:id", authenticate, farmerController.requestToBeExpert)
 farmerRouter.post("/experts/:id", authenticate, farmerController.requestToBeExpert)
+farmerRouter.post("/order", authenticate, farmerController.orderProducts)
+farmerRouter.get("/orders", authenticate, validate(farmerValidator.orders), farmerController.getOrders)
+farmerRouter.patch("/orders/:id", authenticate, farmerController.updateOrder)
 
 export default farmerRouter;
