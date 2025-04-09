@@ -18,7 +18,7 @@ function Navbar({children, user, activePage}){
 
     return (
         <>
-           <div className=' bg-gray-100 flex w-full h-max' style={{minHeight: '100vh'}}>
+           <div className=' bg-gray-100 flex w-full' style={{minHeight: '100%'}}>
                  {/* <Navbar user={'user'} /> */}
                  <div className={`bg-green-900 h-screen w-12/12 lg:w-2/12 fixed top-0 left-0 transform transition-all duration-300 ease-in-out ${
                         hidden ? '-translate-x-full lg:translate-x-0' : 'translate-x-0 '}`}
@@ -28,49 +28,53 @@ function Navbar({children, user, activePage}){
                         <button className='lg:hidden mr-6 my-6 text-lg text-white ring-1 ring-green-800 rounded p-1 cursor-pointer' onClick={()=>{hidden ? setHidden(false) : setHidden(true)}}><RiMenuFoldFill /></button>
                     </div>
 
-                    <h1 className='px-5 mt-4 text-white text-xs'>NAVIGATION</h1>
-                    <div className={active == "dashboard" ? 'px-3 mx-5 rounded mt-4 text-sm flex items-center justify-between cursor-pointer bg-white text-green-900 py-2':
-                            'px-3 mx-5 rounded mt-4 text-white text-sm flex items-center justify-between cursor-pointer hover:bg-white hover:text-green-900 py-2'}
-                        onClick={() => {window.location.href = '/dashboard'}}>
-                        <div className='flex items-center'>
-                            <IoStatsChart />
-                            <h1 className='ml-2'>Dashboard</h1>
-                        </div>
-                        <FaChevronRight />
-                    </div>
-                    <div className={active == "products" ? 
-                            'px-3 mx-5 rounded mt-4 text-sm flex items-center justify-between cursor-pointer bg-white text-green-900 py-2':
-                            'px-3 mx-5 rounded mt-4 text-white text-sm flex items-center justify-between cursor-pointer hover:bg-white hover:text-green-900 py-2'}
-                        onClick={() => {window.location.href = '/products'}}>
-                        <div className='flex items-center'>
-                            <FaShop />
-                            <h1 className='ml-2'>Products</h1>
-                        </div>
-                        <FaChevronRight />
-                    </div>
-                    <div className={active == "orders" ? 
-                            'px-3 mx-5 rounded mt-4 text-sm flex items-center justify-between cursor-pointer bg-white text-green-900 py-2':
-                            'px-3 mx-5 rounded mt-4 text-white text-sm flex items-center justify-between cursor-pointer hover:bg-white hover:text-green-900 py-2'}
-                        onClick={() => {window.location.href = '/orders'}}>
-                        <div className='flex items-center'>
-                            <PiFarmFill />
-                            <h1 className='ml-2'>Orders</h1>
-                        </div>
-                        <FaChevronRight />
-                    </div>
+                    <div className="flex flex-col justify-between ">
+                        <div>
+                            <h1 className='px-5 mt-4 text-white text-xs'>NAVIGATION</h1>
+                            <div className={active == "dashboard" ? 'px-3 mx-5 rounded mt-4 text-sm flex items-center justify-between cursor-pointer bg-white text-green-900 py-2':
+                                    'px-3 mx-5 rounded mt-4 text-white text-sm flex items-center justify-between cursor-pointer hover:bg-white hover:text-green-900 py-2'}
+                                onClick={() => {window.location.href = '/dashboard'}}>
+                                <div className='flex items-center'>
+                                    <IoStatsChart />
+                                    <h1 className='ml-2'>Dashboard</h1>
+                                </div>
+                                <FaChevronRight />
+                            </div>
+                            <div className={active == "products" ? 
+                                    'px-3 mx-5 rounded mt-4 text-sm flex items-center justify-between cursor-pointer bg-white text-green-900 py-2':
+                                    'px-3 mx-5 rounded mt-4 text-white text-sm flex items-center justify-between cursor-pointer hover:bg-white hover:text-green-900 py-2'}
+                                onClick={() => {window.location.href = '/products'}}>
+                                <div className='flex items-center'>
+                                    <FaShop />
+                                    <h1 className='ml-2'>Products</h1>
+                                </div>
+                                <FaChevronRight />
+                            </div>
+                            <div className={active == "orders" ? 
+                                    'px-3 mx-5 rounded mt-4 text-sm flex items-center justify-between cursor-pointer bg-white text-green-900 py-2':
+                                    'px-3 mx-5 rounded mt-4 text-white text-sm flex items-center justify-between cursor-pointer hover:bg-white hover:text-green-900 py-2'}
+                                onClick={() => {window.location.href = '/orders'}}>
+                                <div className='flex items-center'>
+                                    <PiFarmFill />
+                                    <h1 className='ml-2'>Orders</h1>
+                                </div>
+                                <FaChevronRight />
+                            </div>
 
-                    <h1 className='px-5 mt-4 text-white text-xs'>PROFILE</h1>
-                    <div className='px-3 mx-5 rounded mt-4 text-white text-sm flex items-center justify-between cursor-pointer hover:bg-white hover:text-green-900 py-2' onClick={() => {window.location.href = '/dashboard'}}>
-                        <div className='flex items-center'>
-                            <IoStatsChart />
-                            <h1 className='ml-2'>Edit profile</h1>
+                            <h1 className='px-5 mt-4 text-white text-xs'>PROFILE</h1>
+                            <div className='px-3 mx-5 rounded mt-4 text-white text-sm flex items-center justify-between cursor-pointer hover:bg-white hover:text-green-900 py-2' onClick={() => {window.location.href = '/dashboard'}}>
+                                <div className='flex items-center'>
+                                    <IoStatsChart />
+                                    <h1 className='ml-2'>Edit profile</h1>
+                                </div>
+                                <FaChevronRight />
+                            </div>
                         </div>
-                        <FaChevronRight />
-                    </div>
-                    <div className='mx-5 rounded mt-2 text-white text-sm flex items-center justify-between cursor-pointer py-2'>
-                        <button className="w-full border-1 border-white text-white text-sm rounded px-3 py-1 cursor-pointer hover:bg-white hover:text-green-900" onClick={logout}>
-                            Logout
-                        </button>
+                        <div className='mx-5 rounded mt-120 text-white text-sm flex items-center justify-between cursor-pointer py-2'>
+                            <button className="w-full border-1 border-white text-sm rounded px-3 py-3 cursor-pointer bg-white text-green-900" onClick={logout}>
+                                Logout
+                            </button>
+                        </div>
                     </div>
                  </div>
            
