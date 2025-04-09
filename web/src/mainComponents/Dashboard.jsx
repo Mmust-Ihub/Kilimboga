@@ -54,24 +54,24 @@ function App() {
   return (
     <>
         <Navbar user={user} activePage={"dashboard"}>
-          <div className='mx-10 mt-5 pb-10'>
+          <div className='mx-4 lg:mx-10 mt-5 pb-10'>
               <h1 className='text-xl font-bold text-center lg:text-left'>Your total revenue</h1>
               <h1 className='text-3xl font-extrabold mb-5 text-green-600 text-center lg:text-left'>{vendorStats.totalRevenue}</h1>
 
-              <div className='w-full grid grid-cols-3 gap-4'>
-                  <div className="pt-1 shadow-xl ring-1 ring-gray-200 rounded flex flex-col justify-between">
+              <div className='w-full grid grid-cols-1 lg:grid-cols-3 gap-4'>
+                  <div className="pt-1 lg:shadow-xl ring-2 lg:ring-1 ring-gray-200 rounded flex flex-col justify-between">
                       <div className='flex items-start justify-between mx-6 mt-5'>
-                          <div className='text-xl w-max rounded p-3 bg-green-900 text-white border-1 border-gray-300 flex items-center'>
+                          <div className='text-base lg:text-xl w-max rounded p-3 bg-green-900 text-white border-1 border-gray-300 flex items-center'>
                             < GrMoney />
                           </div>
                           <div className='w-full flex flex-col justify-between items-end'>
-                              <p className='text-sm font-semibold ml-3 text-gray-500'>Month Orders</p>
-                              <h1 className='text-2xl font-bold'>{vendorStats.currentMonthOrders}</h1>
+                              <p className='text-xs lg:text-sm font-semibold ml-3 text-gray-500'>Month Orders</p>
+                              <h1 className='text-xl lg:text-2xl font-bold'>{vendorStats.currentMonthOrders}</h1>
                           </div>
                       </div>
                       <div className='rounded bg-gray-300 w-full flex py-3 px-6 justify-between items-center mt-5'>
                           <div className='flex items-center'>
-                              <h1 className='text-xs text-green-800'>{vendorStats.percentageChange} %</h1>
+                              <h1 className='text-xs'>{vendorStats.percentageChange} %</h1>
                               <h1 className='text-xs ml-2 font-semibold'>Last Month</h1>
                           </div>
                           <div className='flex items-center justify-center rounded-3xl p-1 bg-green-900 text-white text-xs cursor-pointer'>
@@ -80,14 +80,14 @@ function App() {
                       </div>
                   </div>
 
-                  <div className="pt-1 shadow-xl ring-1 ring-gray-200 rounded flex flex-col justify-between">
+                  <div className="pt-1 lg:shadow-xl ring-2 lg:ring-1 ring-gray-200 rounded flex flex-col justify-between">
                       <div className='flex items-start justify-between mx-6 mt-5'>
-                          <div className='text-xl w-max rounded p-3 bg-green-900 text-white border-1 border-gray-300 flex items-center'>
+                          <div className='text-base lg:text-xl w-max rounded p-3 bg-green-900 text-white border-1 border-gray-300 flex items-center'>
                               <LuCrown />
                           </div>
                           <div className='w-full flex flex-col justify-between items-end'>
-                              <p className='text-sm font-semibold ml-3 text-gray-500'>Best Seller</p>
-                              <h1 className='text-2xl font-bold'>{vendorStats.bestSellingProducts.length > 0 ? vendorStats.bestSellingProducts[0].productName : "-"}</h1>
+                              <p className='text-xs lg:text-sm font-semibold ml-3 text-gray-500'>Best Seller</p>
+                              <h1 className='text-xl lg:text-2xl font-bold'>{vendorStats.bestSellingProducts.length > 0 ? vendorStats.bestSellingProducts[0].productName : "-"}</h1>
                           </div>
                       </div>
                       <div className='rounded bg-gray-300 w-full flex py-3 px-6 justify-between items-center mt-5'>
@@ -101,14 +101,14 @@ function App() {
                       </div>
                   </div>
 
-                  <div className="pt-1 shadow-xl ring-1 ring-gray-200 rounded flex flex-col justify-between">
+                  <div className="pt-1 lg:shadow-xl ring-2 lg:ring-1 ring-gray-200 rounded flex flex-col justify-between">
                       <div className='flex items-start justify-between mx-6 mt-5'>
-                          <div className='text-xl w-max rounded p-3 bg-green-900 text-white border-1 border-gray-300 flex items-center'>
+                          <div className='text-base lg:text-xl w-max rounded p-3 bg-green-900 text-white border-1 border-gray-300 flex items-center'>
                               <LuCrown />
                           </div>
                           <div className='w-full flex flex-col justify-between items-end'>
-                              <p className='text-sm font-semibold ml-3 text-gray-500'>Delivered Orders</p>
-                              <h1 className='text-2xl font-bold'>{vendorStats.deliveredOrders}</h1>
+                              <p className='text-xs lg:text-sm font-semibold ml-3 text-gray-500'>Delivered Orders</p>
+                              <h1 className='text-xl lg:text-2xl font-bold'>{vendorStats.deliveredOrders}</h1>
                           </div>
                       </div>
                       <div className='rounded bg-gray-300 w-full flex py-3 px-6 justify-between items-center mt-5'>
@@ -124,9 +124,9 @@ function App() {
                   
               </div>
 
-              <div className='flex items-start justify-between w-full mt-10'>
-                    <div className='shadow-xl ring-1 ring-gray-200 rounded w-4/6'>
-                        <h1 className='text-base font-semibold mt-0 mb-0 border-b-1 border-gray-200 px-5 pt-3 pb-3'>Sales overview</h1>
+              <div className='flex flex-col-reverse lg:flex-row items-start justify-between w-full mt-5 lg:mt-10'>
+                    <div className='mt-5 lg:mt-0 shadow-xl ring-2 lg:ring-1 ring-gray-200 rounded w-full lg:w-4/6'>
+                        <h1 className='text-base font-semibold mt-0 mb-0 border-b-1 border-gray-300 lg:border-gray-200 px-5 pt-3 pb-3'>Sales overview</h1>
 
                         <div className='pt-5'>
                             <ResponsiveContainer width="100%" height={450}>
@@ -155,11 +155,11 @@ function App() {
                                         tickMargin={10}  // Space between ticks and axis line
                                         padding={{ left: 20, right: 20 }}  // Padding for first/last bars
                                     />
-                                <YAxis 
+                                    <YAxis 
                                         tick={{ 
-                                        fontSize: 11,
-                                        fontFamily: 'Arial',
-                                        fill: '#666'
+                                            fontSize: 11,
+                                            fontFamily: 'Arial',
+                                            fill: '#666',
                                         }}
                                         axisLine={{ stroke: '#ccc', strokeWidth: 1 }}
                                         tickMargin={10}
@@ -184,28 +184,28 @@ function App() {
                         </div>
                     </div>
 
-                    <div className='shadow-xl ring-1 ring-gray-200 rounded w-2/6 ml-4'>
-                        <h1 className='text-base font-semibold mt-0 mb-0 border-b-1 border-gray-200 px-5 pt-3 pb-3'>Best sellers</h1>
+                    <div className='shadow-sm lg:shadow-xl ring-2 lg:ring-1 ring-gray-200 rounded w-full lg:w-2/6 ml-0 lg:ml-4'>
+                        <h1 className='text-base font-semibold mt-0 mb-0 border-b-1 border-gray-300 lg:border-gray-200 px-5 pt-3 pb-3'>Best sellers</h1>
                         <div className="pt-5">
-                        <ResponsiveContainer width="100%" height={450}>
-                            <PieChart>
-                                <Legend wrapperStyle={{
-                                        paddingTop: '20px',
-                                        paddingBottom: '20px',
-                                        fontSize: '13px',
-                                        fontFamily: 'Arial'
-                                }}/>
-                                <Tooltip contentStyle={{
-                                    backgroundColor: '#fff',
-                                    border: '1px solid #ddd',
-                                    borderRadius: '4px',
-                                    fontSize: '12px',
-                                    fontFamily: 'Arial',
-                                    cursor: 'pointer'
-                                }}/>
-                                <Pie data={bestSellersData} dataKey="population" nameKey="name" cx="50%" cy="50%" outerRadius={180} fill="#8884d8" />
-                            </PieChart>
-                        </ResponsiveContainer>
+                            <ResponsiveContainer width="100%" height={450}>
+                                <PieChart>
+                                    <Legend wrapperStyle={{
+                                            paddingTop: '20px',
+                                            paddingBottom: '20px',
+                                            fontSize: '13px',
+                                            fontFamily: 'Arial'
+                                    }}/>
+                                    <Tooltip contentStyle={{
+                                        backgroundColor: '#fff',
+                                        border: '1px solid #ddd',
+                                        borderRadius: '4px',
+                                        fontSize: '12px',
+                                        fontFamily: 'Arial',
+                                        cursor: 'pointer'
+                                    }}/>
+                                    <Pie data={bestSellersData} dataKey="population" nameKey="name" cx="50%" cy="50%" outerRadius={180} fill="#8884d8" />
+                                </PieChart>
+                            </ResponsiveContainer>
                         </div>
                     </div>
               </div>

@@ -69,24 +69,24 @@ function EditProductForm({name, description, category, price, qty,image,  id, sh
     }
 
     return (
-        <div className="mx-48 mt-5 py-10 px-7 rounded shadow-xl">
-            <form className="w-full grid grid-cols-2 gap-4 text-sm" action="">
+        <div className="mx-5 lg:mx-48 mt-5 py-5 lg:py-10 px-4 lg:px-7 rounded shadow-xl bg-gray-100">
+            <form className="w-full grid grid-cols-1 lg:grid-cols-2 gap-4 text-sm" action="">
                 <div className="flex flex-col">
-                    <label htmlFor="productName">Product Name</label>
+                    <label className="text-xs lg:text-sm text-gray-500" htmlFor="productName">Product Name</label>
                     <input value={formData.productName} onChange={handleEditProductFormValidate} className="rounded p-1 px-3 mt-2 border-1 border-gray-300 outline-0" type="text" id="productName" name="productName" />
                     <p className="error text-red-500 mt-2"></p>
 
                 </div>
 
                 <div className="flex flex-col">
-                    <label htmlFor="productDescription">Product Description</label>
-                    <input value={formData.productDescription} onChange={handleEditProductFormValidate} className="rounded p-1 px-3 mt-2 border-1 border-gray-300 outline-0" type="text" id="productDescription" name="productDescription" />
+                    <label className="text-xs lg:text-sm text-gray-500" htmlFor="productDescription">Product Description</label>
+                    <textarea value={formData.productDescription} onChange={handleEditProductFormValidate} className="rounded p-1 px-3 mt-2 border-1 border-gray-300 outline-0" type="text" id="productDescription" name="productDescription"></textarea>
                     <p className="error text-red-500 mt-2"></p>
 
                 </div>
 
                 <div className="flex flex-col">
-                    <label htmlFor="productCategory">Product Category</label>
+                    <label className="text-xs lg:text-sm text-gray-500" htmlFor="productCategory">Product Category</label>
                     <select value={formData.productCategory} onChange={handleEditProductFormValidate} className="rounded p-1 px-3 mt-2 border-1 border-gray-300 outline-0" name="productCategory" id="productCategory">
                         <option value="fertilisers">Fertilisers</option>
                         <option value="seeds">Seeds</option>
@@ -97,21 +97,21 @@ function EditProductForm({name, description, category, price, qty,image,  id, sh
                 </div>
 
                 <div className="flex flex-col">
-                    <label htmlFor="productImage">Product Image</label>
+                    <label className="text-xs lg:text-sm text-gray-500" htmlFor="productImage">Product Image</label>
                     <input className="rounded p-1 px-3 mt-2 border-1 border-gray-300 outline-0" type="file" id="productImage" name="productImage" accept="jpg" />
                     <p className="error text-red-500 mt-2"></p>
 
                 </div>
 
                 <div className="flex flex-col">
-                    <label htmlFor="productQty">Product Quantity</label>
+                    <label className="text-xs lg:text-sm text-gray-500" htmlFor="productQty">Product Quantity</label>
                     <input value={formData.productQuantity} onChange={handleEditProductFormValidate} className="rounded p-1 px-3 mt-2 border-1 border-gray-300 outline-0" type="number" id="productQuantity" name="productQuantity" />
                     <p className="error text-red-500 mt-2"></p>
 
                 </div>
 
                 <div className="flex flex-col">
-                    <label htmlFor="productPrice">Price</label>
+                    <label className="text-xs lg:text-sm text-gray-500" htmlFor="productPrice">Price</label>
                     <input value={formData.productPrice} onChange={handleEditProductFormValidate} className="rounded p-1 px-3 mt-2 border-1 border-gray-300 outline-0" type="number" id="productPrice" name="productPrice" />
                     <p className="error text-red-500 mt-2"></p>
 
@@ -120,7 +120,7 @@ function EditProductForm({name, description, category, price, qty,image,  id, sh
             <div className="flex flex-row-reverse justify-between items-center">
                 <button 
                     onClick={handleEdit} 
-                    className={`w-40 mt-5 px-6 py-1 cursor-pointer text-white text-sm rounded flex items-center justify-center ${
+                    className={`lg:w-40 mt-5 px-6 py-1 cursor-pointer text-white text-xs lg:text-sm rounded flex items-center justify-center ${
                         loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-green-800 hover:bg-green-700'
                     }`}
                     disabled={loading}
@@ -129,7 +129,7 @@ function EditProductForm({name, description, category, price, qty,image,  id, sh
                 </button>
                 <button 
                     onClick={handleDelete} 
-                    className={`w-40 mt-5 px-6 py-1 cursor-pointer text-white text-sm rounded flex items-center justify-center ${
+                    className={`lg:w-40 mt-5 px-6 py-1 cursor-pointer text-white text-xs lg:text-sm rounded flex items-center justify-center ${
                         loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-red-800 hover:bg-red-700'
                     }`}
                     disabled={deleteLoading}

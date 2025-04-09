@@ -103,26 +103,33 @@ class Database {
             });
     
             const resData = await res.json();
-            
-            sessionStorage.removeItem('token')
-            sessionStorage.removeItem('user')
-            sessionStorage.setItem('token', JSON.stringify(resData.token))
-            sessionStorage.setItem('user', JSON.stringify(resData.user))
-    
-            response = {
-                status: true,
-                message: "Login successful",
-                user: resData.user,
-                token: resData.token,
+
+            if(resData.status == 200 || resData.status == "success" || resData.status == true){
+                sessionStorage.removeItem('token')
+                sessionStorage.removeItem('user')
+                sessionStorage.setItem('token', JSON.stringify(resData.token))
+                sessionStorage.setItem('user', JSON.stringify(resData.user))
+        
+                response = {
+                    status: true,
+                    message: "Login successful",
+                    user: resData.user,
+                    token: resData.token,
+                }
+        
+                return response
+            }else{
+                console.log(resData)
+                throw new Error(resData.message)
             }
-    
-            return response
+            
+           
         } catch (err) {
             console.log(err);
     
             response = {
                 status: false,
-                message: "Login failed",
+                message: err.message || "Login failed",
             }
     
             return response;
