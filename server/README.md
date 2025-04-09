@@ -616,25 +616,26 @@ url: {{base_url}}/api/v1/vendor/orders?state="pending"
 > > **response**
 
 - ```json
-  [
-    {
-      "totalUsers": [{ "count": 4 }],
-      "verifiedUsers": [{ "count": 4 }],
-      "pendingApprovals": [{ "count": 1 }],
-      "approvedUsers": [{ "count": 2 }],
-      "specialUsers": [{ "count": 3 }],
-      "roleDistribution": [
-        { "_id": "admin", "count": 1 },
-        { "_id": "farmer", "count": 1 },
-        { "_id": "vendor", "count": 2 }
-      ],
-      "recentUsers": [{ "count": 4 }],
-      "userGrowth": [
-        { "_id": 3, "count": 3 },
-        { "_id": 4, "count": 1 }
-      ]
-    }
-  ]
+  {
+    "userData": [
+      {
+        "totalUsers": [{ "count": 4 }],
+        "verifiedUsers": [{ "count": 4 }],
+        "pendingApprovals": [],
+        "approvedUsers": [{ "count": 3 }],
+        "specialUsers": [{ "count": 3 }],
+        "roleDistribution": [
+          { "_id": "expert", "count": 1 },
+          { "_id": "admin", "count": 1 },
+          { "_id": "vendor", "count": 1 },
+          { "_id": "farmer", "count": 1 }
+        ],
+        "recentUsers": [{ "count": 4 }],
+        "userGrowth": [{ "_id": 3, "count": 4 }]
+      }
+    ],
+    "salesData": [{ "_id": 4, "totalSales": 5 }]
+  }
   ```
 
 > ## Get Users.
@@ -723,12 +724,37 @@ url: {{base_url}}/api/xv1/admin/user/{id}
   }
   ```
 
-# IOT
+  > ## Manage users (approve, suspend, restore).
+  >
+  > > **request**
 
+- **_url_**: `{{base_url}}/admin/users`
+- **_method:_** `POST`
+- **_headers:_**
+- Authorization: Bearer **token**
+- **_Required query parameter:_**
+
+  | Parameter |  Type  |             options             |
+  | :-------: | :----: | :-----------------------------: |
+  |  action   | string | _approve_, _suspend_, _restore_ |
+
+- **_example url_** :
+
+```yaml
+url: {{base_url}}/admin/users?action=suspend
 ```
 
-```
+- **_request body:_**
+- ```json
+  {
+    "id": "user id"
+  }
+  ```
 
-```
+> > **response**
 
-```
+- `statusCode: 200`
+- **_response body:_**
+- ```json
+  { "status": "success", "message": "Account suspended successfully." }
+  ```

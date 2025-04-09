@@ -83,6 +83,10 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    isSuspended: {
+      type: Boolean,
+      default: false,
+    },
     documents: {
       type: String,
       default: null,
