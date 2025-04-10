@@ -21,7 +21,7 @@ function Navbar({ children, user, activePage }) {
       <div className=" bg-gray-100 flex w-full" style={{ minHeight: "100%" }}>
         {/* <Navbar user={'user'} /> */}
         <div
-          className={`bg-green-900 h-screen w-12/12 lg:w-2/12 fixed top-0 left-0 transform transition-all duration-300 ease-in-out ${
+          className={`bg-green-900 h-screen w-12/12 lg:w-2/12 fixed top-0 left-0 z-50 transform transition-all duration-300 ease-in-out ${
             hidden ? "-translate-x-full lg:translate-x-0" : "translate-x-0 "
           }`}
         >
@@ -105,7 +105,7 @@ function Navbar({ children, user, activePage }) {
                 <FaChevronRight />
               </div>
             </div>
-            <div className="mx-5 rounded mt-100 text-white text-sm flex items-center justify-between cursor-pointer py-2">
+            <div className="mx-5 rounded mt-100 text-white text-sm flex items-center justify-between py-2 relative z-40">
               <button
                 className="w-full border-1 border-white text-sm rounded px-3 py-3 cursor-pointer bg-white text-green-900"
                 onClick={logout}
