@@ -1,6 +1,7 @@
 import DataTable from "react-data-table-component";
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { IoMdArrowRoundBack } from "react-icons/io";
+import toast, { Toaster } from "react-hot-toast";
 import Database from "../js/db.js";
 
 const db = new Database();
@@ -81,8 +82,6 @@ function AdminVendors() {
     setShowForm(true);
   }
 
-  const t = true;
-
   useEffect(() => {
     async function getData() {
       const res = await db.getAdminUsers(token, "vendor", approved);
@@ -99,7 +98,7 @@ function AdminVendors() {
       );
     }
     getData();
-  }, [t]);
+  }, [approved]);
 
   const customStyles = {
     header: {
@@ -153,18 +152,34 @@ function AdminVendors() {
     });
   };
 
-  const handleVendor = (action) => {
+  const handleVendor = async (action) => {
     switch (action) {
       case "approve":
-        // TO DO: approve vendor
+        const resApprove = await db.manageUser(token, formData._id, "approve");
+        if (resApprove.status == true) {
+          toast.success("Vendor approved successfully");
+        } else {
+          toast.error("Vendor approval failed");
+        }
         showTableFn();
         break;
-      case "delete":
-        // TO DO: delete vendor
+      case "restore":
+        const resRestore = await db.manageUser(token, formData._id, "restore");
+        if (resRestore.status == true) {
+          toast.success("Vendor restored successfully");
+        } else {
+          toast.error("Vendor restoration failed");
+        }
         showTableFn();
         break;
       case "suspend":
-        // TO DO: suspend vendor
+        const resSuspend = await db.manageUser(token, formData._id, "suspend");
+        console.log(resSuspend);
+        if (resSuspend.status == true) {
+          toast.success("Vendor suspended successfully");
+        } else {
+          toast.error("Vendor suspension failed");
+        }
         showTableFn();
         break;
       default:
@@ -178,6 +193,25 @@ function AdminVendors() {
       {showTable ? (
         <div className="bg-gray-100 w-full">
           <div className="lg:px-5 py-5 bg-white">
+            <div className="mb-3">
+              <button
+                className="text-xs bg-gray-500 cursor-pointer text-white rounded-full px-4 py-2 mr-3"
+                onClick={() => {
+                  setApproved(true);
+                }}
+              >
+                Approved
+              </button>
+              <button
+                className="text-xs bg-gray-500 cursor-pointer text-white rounded-full px-4 py-2 mr-3"
+                onClick={() => {
+                  setApproved(false);
+                }}
+              >
+                Not approved
+              </button>
+            </div>
+
             <DataTable
               className=""
               columns={columns}
@@ -323,11 +357,11 @@ function AdminVendors() {
             <div className="flex justify-between items-center">
               <button
                 onClick={() => {
-                  handleVendor("delete");
+                  handleVendor("restore");
                 }}
                 className="mt-5 px-6 py-1 cursor-pointer bg-red-800 hover:bg-red-700 text-white text-sm rounded"
               >
-                Delete
+                Restore
               </button>
               <div>
                 <button
@@ -351,6 +385,7 @@ function AdminVendors() {
           </div>
         </>
       ) : null}
+      <Toaster />
     </>
   );
 }

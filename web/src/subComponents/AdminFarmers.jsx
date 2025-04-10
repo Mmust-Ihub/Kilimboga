@@ -96,7 +96,7 @@ function AdminFarmers() {
       );
     }
     getData();
-  }, []);
+  }, [approved]);
 
   const customStyles = {
     header: {
@@ -149,18 +149,34 @@ function AdminFarmers() {
     });
   };
 
-  const handleFarmer = (action) => {
+  const handleFarmer = async (action) => {
     switch (action) {
       case "approve":
-        // TO DO: approve vendor
+        const resApprove = await db.manageUser(token, formData._id, "approve");
+        if (resApprove.status == true) {
+          toast.success("Vendor approved successfully");
+        } else {
+          toast.error("Vendor approval failed");
+        }
         showTableFn();
         break;
-      case "expert":
-        // TO DO: delete vendor
+      case "restore":
+        const resRestore = await db.manageUser(token, formData._id, "restore");
+        if (resRestore.status == true) {
+          toast.success("Vendor restored successfully");
+        } else {
+          toast.error("Vendor restoration failed");
+        }
         showTableFn();
         break;
       case "suspend":
-        // TO DO: suspend vendor
+        const resSuspend = await db.manageUser(token, formData._id, "suspend");
+        console.log(resSuspend);
+        if (resSuspend.status == true) {
+          toast.success("Vendor suspended successfully");
+        } else {
+          toast.error("Vendor suspension failed");
+        }
         showTableFn();
         break;
       default:
@@ -173,6 +189,24 @@ function AdminFarmers() {
     <>
       {showTable ? (
         <div className="lg:px-10 py-5 lg:py-3 bg-white">
+          <div className="mb-3">
+            <button
+              className="text-xs bg-gray-500 cursor-pointer text-white rounded-full px-4 py-2 mr-3"
+              onClick={() => {
+                setApproved(true);
+              }}
+            >
+              Approved
+            </button>
+            <button
+              className="text-xs bg-gray-500 cursor-pointer text-white rounded-full px-4 py-2 mr-3"
+              onClick={() => {
+                setApproved(false);
+              }}
+            >
+              Not approved
+            </button>
+          </div>
           <DataTable
             className=""
             columns={columns}

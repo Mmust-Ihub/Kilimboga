@@ -200,94 +200,106 @@ function Admin() {
           </button>
         </div>
 
-        <h1 className="px-5 mt-4 text-white text-xs">NAVIGATION</h1>
-        <div
-          className={`
-            px-3 mx-5 mt-4 py-2
-            rounded 
-            text-sm 
-            flex items-center justify-between 
-            cursor-pointer 
-            ${
-              currentPage == "Dashboard"
-                ? "bg-white text-green-900"
-                : "text-white hover:bg-white hover:text-green-900"
-            }`}
-          onClick={() => {
-            nav("dashboard");
-          }}
-        >
-          <div className="flex items-center">
-            <IoStatsChart />
-            <h1 className="ml-2">View Stats</h1>
+        <div className="flex flex-col justify-between ">
+          <div>
+            <h1 className="px-5 mt-4 text-white text-xs">NAVIGATION</h1>
+            <div
+              className={`
+                  px-3 mx-5 mt-4 py-2
+                  rounded 
+                  text-sm 
+                  flex items-center justify-between 
+                  cursor-pointer 
+                  ${
+                    currentPage == "Dashboard"
+                      ? "bg-white text-green-900"
+                      : "text-white hover:bg-white hover:text-green-900"
+                  }`}
+              onClick={() => {
+                nav("dashboard");
+              }}
+            >
+              <div className="flex items-center">
+                <IoStatsChart />
+                <h1 className="ml-2">View Stats</h1>
+              </div>
+              <FaChevronRight />
+            </div>
+            <div
+              className={`
+                  px-3 mx-5 mt-2 py-2
+                  rounded 
+                  text-sm 
+                  flex items-center justify-between 
+                  cursor-pointer 
+                  ${
+                    currentPage == "Vendors"
+                      ? "bg-white text-green-900"
+                      : "text-white hover:bg-white hover:text-green-900"
+                  }`}
+              onClick={() => {
+                nav("vendors");
+              }}
+            >
+              <div className="flex items-center">
+                <FaShop />
+                <h1 className="ml-2">Manage Vendors</h1>
+              </div>
+              <FaChevronRight />
+            </div>
+            <div
+              className={`
+                  px-3 mx-5 mt-2 py-2
+                  rounded 
+                  text-sm 
+                  flex items-center justify-between 
+                  cursor-pointer 
+                  ${
+                    currentPage == "Farmers"
+                      ? "bg-white text-green-900"
+                      : "text-white hover:bg-white hover:text-green-900"
+                  }`}
+              onClick={() => {
+                nav("farmers");
+              }}
+            >
+              <div className="flex items-center">
+                <PiFarmFill />
+                <h1 className="ml-2">Manage Farmers</h1>
+              </div>
+              <FaChevronRight />
+            </div>
+            <div
+              className={`
+                  px-3 mx-5 mt-2 py-2
+                  rounded 
+                  text-sm 
+                  flex items-center justify-between 
+                  cursor-pointer 
+                  ${
+                    currentPage == "Experts"
+                      ? "bg-white text-green-900"
+                      : "text-white hover:bg-white hover:text-green-900"
+                  }`}
+              onClick={() => {
+                nav("experts");
+              }}
+            >
+              <div className="flex items-center">
+                <PiFarmFill />
+                <h1 className="ml-2">Manage Experts</h1>
+              </div>
+              <FaChevronRight />
+            </div>
           </div>
-          <FaChevronRight />
-        </div>
-        <div
-          className={`
-            px-3 mx-5 mt-2 py-2
-            rounded 
-            text-sm 
-            flex items-center justify-between 
-            cursor-pointer 
-            ${
-              currentPage == "Vendors"
-                ? "bg-white text-green-900"
-                : "text-white hover:bg-white hover:text-green-900"
-            }`}
-          onClick={() => {
-            nav("vendors");
-          }}
-        >
-          <div className="flex items-center">
-            <FaShop />
-            <h1 className="ml-2">Manage Vendors</h1>
+          <div className="mx-5 rounded mt-120 text-white text-sm flex items-center justify-between cursor-pointer py-2">
+            <button
+              className="w-full border-1 border-white text-sm rounded px-3 py-3 cursor-pointer bg-white text-green-900"
+              onClick={logout}
+            >
+              Logout
+            </button>
           </div>
-          <FaChevronRight />
-        </div>
-        <div
-          className={`
-            px-3 mx-5 mt-2 py-2
-            rounded 
-            text-sm 
-            flex items-center justify-between 
-            cursor-pointer 
-            ${
-              currentPage == "Farmers"
-                ? "bg-white text-green-900"
-                : "text-white hover:bg-white hover:text-green-900"
-            }`}
-          onClick={() => {
-            nav("farmers");
-          }}
-        >
-          <div className="flex items-center">
-            <PiFarmFill />
-            <h1 className="ml-2">Manage Farmers</h1>
-          </div>
-          <FaChevronRight />
-        </div>
-        <div
-          className={`
-            px-3 mx-5 mt-2 py-2
-            rounded 
-            text-sm 
-            flex items-center justify-between 
-            cursor-pointer 
-            ${
-              currentPage == "Experts"
-                ? "bg-white text-green-900"
-                : "text-white hover:bg-white hover:text-green-900"
-            }`}
-          onClick={() => {
-            nav("experts");
-          }}
-        >
-          <div className="flex items-center">
-            <PiFarmFill />
-            <h1 className="ml-2">Manage Experts</h1>
-          </div>
-          <FaChevronRight />
         </div>
       </div>
 
