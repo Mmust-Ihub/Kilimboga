@@ -3,7 +3,7 @@ import { catchAsync } from "../utils/catchAsync.js";
 import uploadFile from "../helpers/uploadFile.js";
 import productModel from "../models/product.model.js";
 import { ApiError } from "../utils/APiError.js";
-import { allowList } from "../utils/utils.js";
+import { allowList, blockList } from "../utils/utils.js";
 import vendorService from "../services/vendor.service.js";
 import orderModel from "../models/order.model.js";
 import { userModel } from "../models/user.model.js";
@@ -98,28 +98,31 @@ const deleteProduct = catchAsync(async (req, res) => {
 const getOrders = catchAsync(async (req, res) => {
   // location, phone number
   const payload = {
-    farmerId: 0,
     vendorId: 0,
     _id: 0,
   };
   const orders = await orderModel
     .find({ vendorId: req.user.id, deliveryStatus: req.query.state }, payload)
-    .populate({ path: "products.productId", select: "_id title category" })
-    .sort({ orderedAt: -1 });
+    .populate({path: "farmerId", select: "phoneNumber"})
+    .populate({ path: "products.productId", select: "_id title" })
+    .sort({ orderedAt: -1 }).lean();
 
   const modifiedOrders = orders.map((order) => {
+    let finalOrder = blockList(order, ["farmerId", "orderedAt", "createdAt", "updatedAt"])
     const modifiedProducts = order.products.map((productItem) => {
       return {
         product: {
           _id: productItem.productId?._id,
-          name: productItem.productId?.name,
+          title: productItem.productId?.title,
+
         },
         quantity: productItem.quantity,
         price: productItem.price,
       };
     });
     return {
-      ...order.toObject(),
+      ...finalOrder,
+      farmerPhoneNumber: order.farmerId?.phoneNumber,
       products: modifiedProducts,
     };
   });
