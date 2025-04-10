@@ -324,7 +324,7 @@ function AdminExperts() {
                     Longitude
                   </label>
                   <input
-                    value={formData.location.coordinates[1]}
+                    value={formData.location.coordinates[0]}
                     onChange={handleFarmerEditForm}
                     className="text-sm lg:text-base rounded p-1 px-3 mt-2 border-1 border-gray-300 outline-0"
                     type="text"
@@ -342,7 +342,7 @@ function AdminExperts() {
                     Latitude
                   </label>
                   <input
-                    value={formData.location.coordinates[0]}
+                    value={formData.location.coordinates[1]}
                     onChange={handleFarmerEditForm}
                     className="text-sm lg:text-base rounded p-1 px-3 mt-2 border-1 border-gray-300 outline-0"
                     type="text"

@@ -333,7 +333,7 @@ function AdminVendors() {
                     Longitude
                   </label>
                   <input
-                    value={formData.location.coordinates[1]}
+                    value={formData.location.coordinates[0]}
                     onChange={handleVendorEditForm}
                     className="rounded text-sm lg:text-base p-1 px-3 mt-2 border-1 border-gray-300 outline-0"
                     type="text"
@@ -351,7 +351,7 @@ function AdminVendors() {
                     Latitude
                   </label>
                   <input
-                    value={formData.location.coordinates[0]}
+                    value={formData.location.coordinates[1]}
                     onChange={handleVendorEditForm}
                     className="rounded text-sm lg:text-base p-1 px-3 mt-2 border-1 border-gray-300 outline-0"
                     type="text"
