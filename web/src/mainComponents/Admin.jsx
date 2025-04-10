@@ -151,12 +151,12 @@ function Admin() {
 
     adminStats.userGrowth.length > 0 &&
       adminStats.userGrowth.forEach((item) => {
-        updatedData[item._id].userGrowth = item.count;
+        updatedData[item._id - 1].userGrowth = item.count;
       });
 
     adminStats.salesData.length > 0 &&
       adminStats.salesData.forEach((item) => {
-        updatedData[item._id].sales = item.totalSales;
+        updatedData[item._id - 1].sales = item.totalSales;
       });
 
     adminStats.roleDistribution.length > 0 &&
