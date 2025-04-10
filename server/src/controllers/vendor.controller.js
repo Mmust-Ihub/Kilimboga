@@ -104,15 +104,15 @@ const getOrders = catchAsync(async (req, res) => {
   };
   const orders = await orderModel
     .find({ vendorId: req.user.id, deliveryStatus: req.query.state }, payload)
-    .populate({ path: "products.product", select: "title" })
+    .populate({ path: "products.productId", select: "_id title category" })
     .sort({ orderedAt: -1 });
 
   const modifiedOrders = orders.map((order) => {
     const modifiedProducts = order.products.map((productItem) => {
       return {
         product: {
-          _id: productItem.product._id,
-          name: productItem.product.name,
+          _id: productItem.productId?._id,
+          name: productItem.productId?.name,
         },
         quantity: productItem.quantity,
         price: productItem.price,
