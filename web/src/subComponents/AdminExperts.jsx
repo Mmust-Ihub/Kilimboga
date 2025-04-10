@@ -6,7 +6,7 @@ import Database from "../js/db.js";
 
 const db = new Database();
 
-function AdminFarmers() {
+function AdminExperts() {
   const [showTable, setShowTable] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -20,9 +20,9 @@ function AdminFarmers() {
       coordinates: [0, 0],
       _id: "",
     },
-    role: "farmer",
+    role: "expert",
     isVerified: true,
-    isSpecial: false,
+    isSpecial: true,
     isApproved: true,
     documents: "",
     imageUrl: null,
@@ -55,7 +55,7 @@ function AdminFarmers() {
       name: "",
       cell: (row) => (
         <button
-          className="bg-gray-500 cursor-pointer text-white rounded-full px-4 py-2 text-xs lg:text-sm"
+          className="bg-gray-500 cursor-pointer text-white rounded-full px-4 py-2"
           onClick={async () => {
             const res = await db.getAdminUser(token, row.id);
             setFormData(res.data);
@@ -68,8 +68,8 @@ function AdminFarmers() {
       selector: (row) => row.action,
     },
   ]);
-  const [approved, setApproved] = useState(false);
-  const [fontSize, setFontSize] = useState(12);
+  const [approved, setApproved] = useState(true);
+
   function showTableFn() {
     setShowTable(true);
     setShowForm(false);
@@ -82,7 +82,7 @@ function AdminFarmers() {
 
   useEffect(() => {
     async function getData() {
-      const res = await db.getAdminUsers(token, "farmer", approved);
+      const res = await db.getAdminUsers(token, "expert", approved);
       console.log(res);
       setTdata(
         res.data.users.map((item) => {
@@ -117,7 +117,7 @@ function AdminFarmers() {
           borderRightStyle: "solid",
           borderRightWidth: "1px",
           borderRightColor: "#D1D5DB",
-          // fontSize: "14px",
+          //   fontSize: "14px",
           paddingTop: "10px",
           paddingBottom: "10px",
         },
@@ -131,7 +131,7 @@ function AdminFarmers() {
           borderRightColor: "#D1D5DB",
           paddingTop: "15px",
           paddingBottom: "15px",
-          // fontSize: "14px",
+          //   fontSize: "14px",
         },
       },
     },
@@ -160,7 +160,7 @@ function AdminFarmers() {
         }
         showTableFn();
         break;
-      case "restore":
+      case "delete":
         const resRestore = await db.manageUser(token, formData._id, "restore");
         if (resRestore.status == true) {
           toast.success("Vendor restored successfully");
@@ -188,7 +188,25 @@ function AdminFarmers() {
   return (
     <>
       {showTable ? (
-        <div className="lg:px-10 px-5 py-5 lg:py-3 bg-white">
+        <div className="lg:px-10 px-5 py-5 bg-white">
+          <div className="mb-3">
+            <button
+              className="text-xs bg-gray-500 cursor-pointer text-white rounded-full px-4 py-2 mr-3"
+              onClick={() => {
+                setApproved(true);
+              }}
+            >
+              Approved
+            </button>
+            <button
+              className="text-xs bg-gray-500 cursor-pointer text-white rounded-full px-4 py-2 mr-3"
+              onClick={() => {
+                setApproved(false);
+              }}
+            >
+              Not approved
+            </button>
+          </div>
           <DataTable
             className=""
             columns={columns}
@@ -210,6 +228,18 @@ function AdminFarmers() {
           </button>
           <div style={{ minHeight: "100vh" }}>
             <div className="mt-3 lg:mx-10 mx-5 ring-1 ring-gray-300 p-5 rounded bg-gray-100">
+              <h3 className="text-base font-semibold">Documents</h3>
+              <ol className="mb-3">
+                <li>
+                  <a
+                    href={formData.documents}
+                    className="text-sm cursor-pointer text-blue-600"
+                    target="_blank"
+                  >
+                    Supporting document
+                  </a>
+                </li>
+              </ol>
               <form
                 className="w-full grid grid-cols-1 lg:grid-cols-2 gap-4 text-sm"
                 action=""
@@ -322,25 +352,34 @@ function AdminFarmers() {
                   <p className="error text-red-500 mt-2"></p>
                 </div>
               </form>
-              <div className="flex justify-between items-center">
-                <button
-                  onClick={() => {
-                    handleFarmer("restore");
-                  }}
-                  className="mt-5 px-6 py-1 cursor-pointer bg-green-800 hover:bg-green-700 text-white text-sm rounded"
-                >
-                  Restore
-                </button>
-                <div>
+              <div className="flex lg:flex-row flex-col justify-between items-center w-full lg:w-max">
+                <div className="w-full lg:w-max">
+                  <button
+                    onClick={() => {
+                      handleFarmer("restore");
+                    }}
+                    className="w-full lg:w-max mt-5 lg:mt-5 lg:mr-5 px-6 py-3 lg:py-1 cursor-pointer bg-green-800 hover:bg-green-700 text-white text-sm rounded"
+                  >
+                    Restore
+                  </button>
                   <button
                     onClick={() => {
                       handleFarmer("suspend");
                     }}
-                    className="mt-5 mr-5 px-6 py-1 cursor-pointer bg-red-800 hover:bg-red-700 text-white text-sm rounded"
+                    className=" w-full lg:w-max mt-2 lg:mt-5 lg:mr-5 px-6 py-3 lg:py-1 cursor-pointer bg-red-800 hover:bg-red-700 text-white text-sm rounded"
                   >
                     Suspend
                   </button>
                 </div>
+
+                <button
+                  onClick={() => {
+                    handleFarmer("approve");
+                  }}
+                  className="w-full lg:w-max mt-2 lg:mt-5 px-6 py-3 lg:py-1 cursor-pointer bg-green-800 hover:bg-green-700 text-white text-sm rounded"
+                >
+                  Approve
+                </button>
               </div>
             </div>
           </div>
@@ -351,4 +390,4 @@ function AdminFarmers() {
   );
 }
 
-export default AdminFarmers;
+export default AdminExperts;
