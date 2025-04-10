@@ -4,3 +4,13 @@
     background-color: white;
     color: #0d542b;
 }
+
+/* Custom utility to hide scrollbars */
+.scrollbar-hide {
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, and Edge */
+}
