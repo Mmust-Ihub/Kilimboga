@@ -132,32 +132,40 @@ const requestToBeExpert = catchAsync(async (req, res) => {
 });
 
 const orderProducts = catchAsync(async (req, res) => {
-  const {CheckoutRequestID } = await farmerService.initiateCheckout(req.body);
+  const { CheckoutRequestID } = await farmerService.initiateCheckout(req.body);
   await farmerService.processOrders(req.user, req.body, CheckoutRequestID);
-  return res.status(httpStatus.OK).json({"message": "order placed successfully"});
+  return res
+    .status(httpStatus.OK)
+    .json({ message: "order placed successfully" });
 });
 
-const getOrders = catchAsync(async(req, res) => {
-  const deliveryStatus = req.query.status
-  if(deliveryStatus !== "all"){
-    const orders = await orderModel.find({deliveryStatus}).sort({orderedAt: -1})
-    const ordersCount = await orderModel.countDocuments({deliveryStatus})
-    return res.status(httpStatus.OK).json({ordersCount, orders})
+const getOrders = catchAsync(async (req, res) => {
+  const deliveryStatus = req.query.status;
+  let orders, ordersCount;
+  if (deliveryStatus !== "all") {
+    orders = await orderModel
+      .find({ deliveryStatus })
+      .populate({ path: "products.productId", select: "title imageUrl" })
+      .sort({ orderedAt: -1 });
+    ordersCount = await orderModel.countDocuments({ deliveryStatus });
+  } else {
+    orders = await orderModel.find().sort({ orderedAt: -1 });
+    ordersCount = await orderModel.countDocuments();
   }
-  const orders = await orderModel.find().sort({orderedAt: -1})
-  const ordersCount = await orderModel.countDocuments()
-  return res.status(httpStatus.OK).json({ordersCount, orders})
-})
+  return res.status(httpStatus.OK).json({ ordersCount, orders });
+});
 
-const updateOrder = catchAsync(async(req, res) => {
-  const order = await orderModel.findById(req.params.id)
-  if(!order){
-    throw new ApiError(404, "The order does not exist")
+const updateOrder = catchAsync(async (req, res) => {
+  const order = await orderModel.findById(req.params.id);
+  if (!order) {
+    throw new ApiError(404, "The order does not exist");
   }
-  order.deliveryStatus = "delivered"
-  await order.save()
-  return res.status(httpStatus.OK).json({"message": "order updated successfully."})
-})
+  order.deliveryStatus = "delivered";
+  await order.save();
+  return res
+    .status(httpStatus.OK)
+    .json({ message: "order updated successfully." });
+});
 
 export default {
   famerProfile,
@@ -170,5 +178,5 @@ export default {
   requestToBeExpert,
   orderProducts,
   getOrders,
-  updateOrder
+  updateOrder,
 };
