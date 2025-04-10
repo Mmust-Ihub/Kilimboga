@@ -141,16 +141,17 @@ const orderProducts = catchAsync(async (req, res) => {
 
 const getOrders = catchAsync(async (req, res) => {
   const deliveryStatus = req.query.status;
+  console.log(req.user.id)
   let orders, ordersCount;
   if (deliveryStatus !== "all") {
     orders = await orderModel
-      .find({ deliveryStatus })
+      .find({farmerId: req.user.id,  deliveryStatus })
       .populate({ path: "products.productId", select: "title imageUrl" })
       .sort({ orderedAt: -1 });
-    ordersCount = await orderModel.countDocuments({ deliveryStatus });
+    ordersCount = await orderModel.countDocuments({ farmerId: req.user.id, deliveryStatus });
   } else {
-    orders = await orderModel.find().sort({ orderedAt: -1 });
-    ordersCount = await orderModel.countDocuments();
+    orders = await orderModel.find({farmerId: req.user.id}).sort({ orderedAt: -1 });
+    ordersCount = await orderModel.countDocuments({farmerId: req.user.id});
   }
   return res.status(httpStatus.OK).json({ ordersCount, orders });
 });
