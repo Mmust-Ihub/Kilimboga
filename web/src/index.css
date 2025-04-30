@@ -1,16 +1,23 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
-.active{
-    background-color: white;
-    color: #0d542b;
+@import url("https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap");
+body {
+  font-family: "Rubik", sans-serif !important;
+  font-optical-sizing: auto;
+}
+
+.active {
+  background-color: white;
+  color: #0d542b;
 }
 
 /* Custom utility to hide scrollbars */
 .scrollbar-hide {
-    -ms-overflow-style: none; /* Internet Explorer 10+ */
-    scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, and Edge */
+  display: none; /* Chrome, Safari, and Edge */
 }

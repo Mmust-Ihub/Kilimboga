@@ -362,7 +362,7 @@ class Database {
 
       const resData = await res.json();
 
-      // console.log(resData)
+      console.log(resData);
 
       return {
         status: true,

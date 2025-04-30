@@ -73,10 +73,10 @@ function Admin() {
     { name: "Dec", sales: 0, userGrowth: 0 },
   ]);
   const [usersComposition, setUsersComposition] = useState([
-    { name: "farmer", population: 0, fill: "#8884d8" },
-    { name: "vendor", population: 0, fill: "#82ca9d" },
-    { name: "admin", population: 0, fill: "#82ca9d" },
-    { name: "experts", population: 0, fill: "#ffc658" },
+    { name: "farmer", population: 0, fill: "#498536" },
+    { name: "vendor", population: 0, fill: "#5ab334" },
+    { name: "admin", population: 0, fill: "#63b32e" },
+    { name: "expert", population: 0, fill: "#80cc28" },
   ]);
   const [hidden, setHidden] = useState(true);
 
@@ -187,9 +187,16 @@ function Admin() {
         }`}
       >
         <div className="flex justify-between items-center border-b-1 border-green-800">
-          <h1 className="py-6 px-5 font-bold text-lg text-white text-left  w-full">
-            Kilimboga
-          </h1>
+          <div className="flex items-center justify-start py-3 px-5">
+            <img
+              src="/kilimboga logo.jpg"
+              alt="logo"
+              className="h-6 w-6 rounded"
+            />
+            <h1 className="ml-2 font-bold text-lg text-white text-left  w-full">
+              Kilimboga
+            </h1>
+          </div>
           <button
             className="lg:hidden mr-6 my-6 text-lg text-white ring-1 ring-green-800 rounded p-1 cursor-pointer"
             onClick={() => {
@@ -200,11 +207,12 @@ function Admin() {
           </button>
         </div>
 
-        <div className="flex flex-col justify-between ">
+        <div className="flex flex-col justify-between h-[94%]">
           <div>
-            <h1 className="px-5 mt-4 text-white text-xs">NAVIGATION</h1>
-            <div
-              className={`
+            <div>
+              <h1 className="px-5 mt-4 text-white text-xs">NAVIGATION</h1>
+              <div
+                className={`
                   px-3 mx-5 mt-4 py-2
                   rounded 
                   text-sm 
@@ -215,18 +223,26 @@ function Admin() {
                       ? "bg-white text-green-900"
                       : "text-white hover:bg-white hover:text-green-900"
                   }`}
-              onClick={() => {
-                nav("dashboard");
-              }}
-            >
-              <div className="flex items-center">
-                <IoStatsChart />
-                <h1 className="ml-2">View Stats</h1>
+                onClick={() => {
+                  nav("dashboard");
+                }}
+              >
+                <div className="flex items-center">
+                  <div
+                    className={
+                      currentPage == "Dashboard"
+                        ? "text-white bg-green-800 dark:bg-gray-800 rounded p-2"
+                        : "text-green-900 bg-white rounded p-2"
+                    }
+                  >
+                    <IoStatsChart />
+                  </div>
+                  <h1 className="ml-2">View Stats</h1>
+                </div>
+                <FaChevronRight />
               </div>
-              <FaChevronRight />
-            </div>
-            <div
-              className={`
+              <div
+                className={`
                   px-3 mx-5 mt-2 py-2
                   rounded 
                   text-sm 
@@ -237,18 +253,26 @@ function Admin() {
                       ? "bg-white text-green-900"
                       : "text-white hover:bg-white hover:text-green-900"
                   }`}
-              onClick={() => {
-                nav("vendors");
-              }}
-            >
-              <div className="flex items-center">
-                <FaShop />
-                <h1 className="ml-2">Manage Vendors</h1>
+                onClick={() => {
+                  nav("vendors");
+                }}
+              >
+                <div className="flex items-center">
+                  <div
+                    className={
+                      currentPage == "Vendors"
+                        ? "text-white bg-green-800 dark:bg-gray-800 rounded p-2"
+                        : "text-green-900 bg-white rounded p-2"
+                    }
+                  >
+                    <FaShop />
+                  </div>
+                  <h1 className="ml-2">Manage Vendors</h1>
+                </div>
+                <FaChevronRight />
               </div>
-              <FaChevronRight />
-            </div>
-            <div
-              className={`
+              <div
+                className={`
                   px-3 mx-5 mt-2 py-2
                   rounded 
                   text-sm 
@@ -259,18 +283,26 @@ function Admin() {
                       ? "bg-white text-green-900"
                       : "text-white hover:bg-white hover:text-green-900"
                   }`}
-              onClick={() => {
-                nav("farmers");
-              }}
-            >
-              <div className="flex items-center">
-                <PiFarmFill />
-                <h1 className="ml-2">Manage Farmers</h1>
+                onClick={() => {
+                  nav("farmers");
+                }}
+              >
+                <div className="flex items-center">
+                  <div
+                    className={
+                      currentPage == "Farmers"
+                        ? "text-white bg-green-800 dark:bg-gray-800 rounded p-2"
+                        : "text-green-900 bg-white rounded p-2"
+                    }
+                  >
+                    <PiFarmFill />
+                  </div>
+                  <h1 className="ml-2">Manage Farmers</h1>
+                </div>
+                <FaChevronRight />
               </div>
-              <FaChevronRight />
-            </div>
-            <div
-              className={`
+              <div
+                className={`
                   px-3 mx-5 mt-2 py-2
                   rounded 
                   text-sm 
@@ -281,20 +313,29 @@ function Admin() {
                       ? "bg-white text-green-900"
                       : "text-white hover:bg-white hover:text-green-900"
                   }`}
-              onClick={() => {
-                nav("experts");
-              }}
-            >
-              <div className="flex items-center">
-                <PiFarmFill />
-                <h1 className="ml-2">Manage Experts</h1>
+                onClick={() => {
+                  nav("experts");
+                }}
+              >
+                <div className="flex items-center">
+                  <div
+                    className={
+                      currentPage == "Experts"
+                        ? "text-white bg-green-800 dark:bg-gray-800 rounded p-2"
+                        : "text-green-900 bg-white rounded p-2"
+                    }
+                  >
+                    <PiFarmFill />
+                  </div>
+                  <h1 className="ml-2">Manage Experts</h1>
+                </div>
+                <FaChevronRight />
               </div>
-              <FaChevronRight />
             </div>
           </div>
-          <div className="mx-5 rounded mt-120 text-white text-sm flex items-center justify-between cursor-pointer py-2">
+          <div className="mx-5 rounded mb-2 text-white text-sm flex items-center justify-between cursor-pointer py-2">
             <button
-              className="w-full border-1 border-white text-sm rounded px-3 py-3 cursor-pointer bg-white text-green-900"
+              className="w-full font-semibold border-1 border-white text-sm rounded px-3 py-3 cursor-pointer hover:bg-white hover:text-green-900"
               onClick={logout}
             >
               Logout
@@ -304,7 +345,7 @@ function Admin() {
       </div>
 
       <div className="w-12/12 lg:w-10/12 h-max lg:ml-auto bg-gray-200">
-        <div className="bg-white pt-4 pb-3 px-5 lg:py-6 lg:px-10 lg:mt-0 border-b-1 border-gray-200 w-full flex items-center justify-between">
+        <div className="bg-white pt-4 pb-3 px-5 lg:py-3 lg:px-10 lg:mt-0 border-b-1 border-gray-200 w-full flex items-center justify-between">
           <button
             className="lg:hidden text-green-800 text-lg ring-1 ring-gray-300 rounded p-1 cursor-pointer"
             onClick={() => {
@@ -313,19 +354,20 @@ function Admin() {
           >
             <RiMenuFold4Fill />
           </button>
-          <h1 className="font-bold text-lg text-left">
+          <h1 className="font-bold text-lg text-left text-green-800">
             Hello, {user.firstName}!
           </h1>
-          <div className="hidden lg:visible">
+          <div className="hidden lg:block">
             <button
-              className="ring-1 ring-gray-300 rounded px-5 py-0.5 text-sm cursor-pointer"
+              className="ring-1 shadow-lg ring-gray-200 rounded px-5 py-1 text-sm cursor-pointer hover:text-white hover:bg-green-800 transition-all duration-300 ease-in-out"
               onClick={logout}
             >
               Logout
             </button>
           </div>
         </div>
-        <div className="py-3 px-5 lg:px-10 border-b-1 text-xs border-gray-200 w-full flex items-center justify-start">
+
+        <div className="bg-white dark:bg-gray-300 py-3 px-5 lg:px-10 border-b-1 text-xs border-gray-200 w-full flex items-center justify-start shadow-lg">
           <h1 className="font-semibold text-sm text-black text-left">
             Admin Dashboard
           </h1>
@@ -338,9 +380,9 @@ function Admin() {
         </div>
 
         {showDashboard ? (
-          <div className="mx-5 lg:mx-10 mt-3 lg:mt-3">
+          <div className="mx-5 lg:mx-10 mt-3 lg:mt-5">
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-              <div className="pt-1 ring-1 bg-gray-100 ring-gray-300 lg:ring-gray-200 rounded flex flex-col justify-between">
+              <div className="pt-1 lg:shadow-xl ring-2 lg:ring-1 bg-gray-100 ring-gray-300 rounded-xl flex flex-col justify-between">
                 <div className="flex items-start justify-between mx-6 mt-5">
                   <div className="text-base lg:text-xl w-max rounded p-3 bg-green-900 text-white border-1 border-gray-300 flex items-center">
                     <LuCrown />
@@ -364,7 +406,7 @@ function Admin() {
                 </div>
               </div>
 
-              <div className="pt-1 ring-1 bg-gray-100 ring-gray-300 lg:ring-gray-200 rounded flex flex-col justify-between">
+              <div className="pt-1 lg:shadow-xl ring-2 lg:ring-1 bg-gray-100 ring-gray-300 rounded-xl flex flex-col justify-between">
                 <div className="flex items-start justify-between mx-6 mt-5">
                   <div className="text-base lg:text-xl w-max rounded p-3 bg-green-900 text-white border-1 border-gray-300 flex items-center">
                     <LuCrown />
@@ -409,7 +451,7 @@ function Admin() {
                             </div>
                         </div> */}
 
-              <div className="pt-1 ring-1 bg-gray-100 ring-gray-300 lg:ring-gray-200 rounded flex flex-col justify-between">
+              <div className="pt-1 lg:shadow-xl ring-2 lg:ring-1 bg-gray-100 ring-gray-300 rounded-xl flex flex-col justify-between">
                 <div className="flex items-start justify-between mx-6 mt-5">
                   <div className="text-base lg:text-xl w-max rounded p-3 bg-green-900 text-white border-1 border-gray-300 flex items-center">
                     <LuCrown />
@@ -433,7 +475,7 @@ function Admin() {
                 </div>
               </div>
 
-              <div className="pt-1 ring-1 bg-gray-100 ring-gray-300 lg:ring-gray-200 rounded flex flex-col justify-between">
+              <div className="pt-1 lg:shadow-xl ring-2 lg:ring-1 bg-gray-100 ring-gray-300 rounded-xl flex flex-col justify-between">
                 <div className="flex items-start justify-between mx-6 mt-5">
                   <div className="text-base lg:text-xl w-max rounded p-3 bg-green-900 text-white border-1 border-gray-300 flex items-center">
                     <LuCrown />
@@ -458,8 +500,8 @@ function Admin() {
               </div>
             </div>
 
-            <div className="h-max flex flex-col-reverse lg:flex-row items-start justify-between mt-10 pb-10">
-              <div className="shadow-xl ring-1 ring-gray-300 lg:ring-gray-200 rounded w-full lg:w-4/6 bg-gray-100">
+            <div className="flex flex-col-reverse lg:flex-row items-start justify-between w-full mt-5 lg:mt-10">
+              <div className="mt-5 lg:mt-0 shadow-xl ring-2 lg:ring-1 ring-gray-300 rounded-xl w-full lg:w-4/6 bg-gray-100">
                 <h1 className="text-base font-semibold mt-0 mb-0 border-b-1 border-gray-300 lg:border-gray-200 px-5 pt-3 pb-3">
                   Sales overview
                 </h1>
@@ -534,7 +576,7 @@ function Admin() {
                         // yAxisId="left"
                         dataKey="sales"
                         barSize={70}
-                        fill="#413ea0"
+                        fill="#016630"
                         name="Total Sales"
                         radius={[4, 4, 0, 0]}
                         isAnimationActive={true}
@@ -544,7 +586,7 @@ function Admin() {
                         // yAxisId="right"
                         type="monotone"
                         dataKey="userGrowth"
-                        stroke="#ff7300"
+                        stroke="#80cc28"
                         strokeWidth={2}
                         name="User Growth"
                       />
@@ -553,7 +595,7 @@ function Admin() {
                 </div>
               </div>
 
-              <div className="h-full shadow-lg lg:shadow-xl ring-1 ring-gray-300 lg:ring-gray-200 rounded w-full lg:w-2/6 ml-0 lg:ml-4 mb-5 lg:mb-0 bg-gray-100">
+              <div className="shadow-sm lg:shadow-xl ring-2 lg:ring-1 ring-gray-300 rounded-xl w-full lg:w-2/6 ml-0 lg:ml-4 bg-gray-100">
                 <h1 className="text-base font-semibold mt-0 mb-0 border-b-1 border-gray-300 lg:border-gray-200 px-5 pt-3 pb-3">
                   User Composition
                 </h1>

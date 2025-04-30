@@ -69,6 +69,7 @@ function AdminExperts() {
     },
   ]);
   const [approved, setApproved] = useState(true);
+  const [fontSize, setFontSize] = useState(13);
 
   function showTableFn() {
     setShowTable(true);
@@ -102,22 +103,24 @@ function AdminExperts() {
     header: {
       style: {
         minHeight: "56px",
+        fontSize: `${fontSize + 8}px`,
       },
     },
     headRow: {
       style: {
-        borderTopStyle: "solid",
-        borderTopWidth: "1px",
-        borderTopColor: "#D1D5DB",
+        // borderTopStyle: "solid",
+        // borderTopWidth: "1px",
+        // borderTopColor: "#D1D5DB",
       },
     },
     headCells: {
       style: {
         "&:not(:last-of-type)": {
-          borderRightStyle: "solid",
-          borderRightWidth: "1px",
-          borderRightColor: "#D1D5DB",
-          //   fontSize: "14px",
+          // borderRightStyle: "solid",
+          // borderRightWidth: "1px",
+          // borderRightColor: "#D1D5DB",
+          fontSize: `${fontSize + 2}px`,
+          fontWeight: "bold",
           paddingTop: "10px",
           paddingBottom: "10px",
         },
@@ -126,12 +129,12 @@ function AdminExperts() {
     cells: {
       style: {
         "&:not(:last-of-type)": {
-          borderRightStyle: "solid",
-          borderRightWidth: "1px",
-          borderRightColor: "#D1D5DB",
-          paddingTop: "15px",
-          paddingBottom: "15px",
-          //   fontSize: "14px",
+          // borderRightStyle: "solid",
+          // borderRightWidth: "1px",
+          // borderRightColor: "#D1D5DB",
+          paddingTop: "22px",
+          paddingBottom: "22px",
+          fontSize: `${fontSize + 2}px`,
         },
       },
     },
@@ -352,8 +355,8 @@ function AdminExperts() {
                   <p className="error text-red-500 mt-2"></p>
                 </div>
               </form>
-              <div className="flex lg:flex-row flex-col justify-between items-center w-full lg:w-max">
-                <div className="w-full lg:w-max">
+              <div className="flex lg:flex-row flex-col justify-between items-center">
+                <div className="flex flex-col lg:flex-row w-full lg:w-max">
                   <button
                     onClick={() => {
                       handleFarmer("restore");
