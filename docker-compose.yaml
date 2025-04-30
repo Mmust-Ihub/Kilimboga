@@ -1,29 +1,22 @@
 services:
   server:
-    build: .
-    image: server
-    env_file:
-      - ./server/.env
-    environment:
-      - MONGODB_URL=mongodb://mongodb:27017/node-boilerplate
+    image: kariukiantony/kilimboga-server:latest
+    container_name: kilimboga-server
     ports:
-      - '3000:3000'
+      - "3000:3000"
+    networks:
+      - kilimboga
+
+  client:
+    image: kariukiantony/kilimboga-client:latest
+    container_name: kilimboga-client
+    ports:
+      - "5173:5173"
+    command: npm run dev
+    networks:
+      - kilimboga
     depends_on:
-      - mongodb
-    networks:
-      - kilimboga
-
-  mongodb:
-    image: mongo:latest
-    ports:
-      - '27017:27017'
-    volumes:
-      - dbdata:/data/db
-    networks:
-      - kilimboga
-
-volumes:
-  dbdata:
+      - server
 
 networks:
   kilimboga:

@@ -1,7 +1,7 @@
 class Database {
   // baseUrl = 'https://db5rhc6r-3000.inc1.devtunnels.ms';
-  baseUrl = "https://kilimboga.vercel.app";
-  // baseUrl = 'https://db5rhc6r-3000.inc1.devtunnels.ms';
+  // baseUrl = "https://kilimboga.vercel.app";
+  baseUrl = "http://localhost:3000";
 
   async register(user) {
     const formData = new FormData();
