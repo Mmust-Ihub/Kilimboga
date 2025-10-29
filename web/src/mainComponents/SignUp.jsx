@@ -122,21 +122,25 @@ function SignUp() {
     if (error) {
       let message = error.details[0].message.replace(/"/g, "");
       toast.error(message);
+      setLoading(false);
       return;
     }
 
     if (formData.documents.length < 1) {
       toast.error("Supporting document required");
+      setLoading(false);
       return;
     } else if (formData.documents[0].type !== "application/pdf") {
       toast.error("Document should be in PDF format");
+      setLoading(false);
       return;
     } else if (formData.documents[0].size > 5000000) {
       toast.error("Document size should not exceed 5MB");
+      setLoading(false);
       return;
     }
 
-    console.log(formData);
+    // console.log(formData);
 
     const { status, message } = await db.register(formData);
 

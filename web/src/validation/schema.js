@@ -80,14 +80,13 @@ const lastName = Joi.object({
 
 const email = Joi.object({
   email: Joi.string()
-    .email({ minDomainSegments: 1, tlds: { allow: ["com", "net"] } })
-    .pattern(new RegExp("^(?![0-9]+@)[A-Za-z0-9]+@[A-Za-z0-9]+.[A-Za-z]{2,}$"))
+    // Use Joi's built-in email validation and allow any valid TLD.
+    .email({ tlds: { allow: false } })
     .required()
     .messages({
       "string.email": "Please enter a valid email address.",
       "any.required": "Email is required.",
       "string.empty": "Email cannot be empty",
-      "string.pattern.base": "Please enter a valid email address",
     }),
 });
 
@@ -146,12 +145,11 @@ const signUpSchema = Joi.object({
     }),
 
   email: Joi.string()
-    .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
-    .pattern(new RegExp("^(?![0-9]+@)[A-Za-z0-9]+@[A-Za-z0-9]+.[A-Za-z]{2,}$"))
+    // Accept any valid email address (allow any TLD). Remove the restrictive custom pattern.
+    .email({ tlds: { allow: false } })
     .required()
     .messages({
       "string.email": "Please enter a valid email address.",
-      "string.pattern.base": "Please enter a valid emial address",
       "any.required": "Email is required.",
     }),
 
@@ -175,14 +173,13 @@ const signUpSchema = Joi.object({
 
 const loginSchema = Joi.object({
   email: Joi.string()
-    .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
-    .pattern(new RegExp("^(?![0-9]+@)[A-Za-z0-9]+@[A-Za-z0-9]+.[A-Za-z]{2,}$"))
+    // Use Joi's email validator and allow any valid TLDs; remove the custom pattern restriction.
+    .email({ tlds: { allow: false } })
     .required()
     .messages({
       "string.email": "Please enter a valid email address.",
       "any.required": "Email is required.",
       "string.empty": "Email cannot be empty",
-      "string.pattern.base": "Please enter a valid email address",
     }),
 
   password: Joi.string().min(6).required().messages({
