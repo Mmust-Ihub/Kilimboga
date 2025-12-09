@@ -315,3 +315,273 @@ while True:
   
     
     time.sleep(2)  # Avoid excessive requests
+
+
+
+
+# v2
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <driver/adc.h> 
+
+/* ============== Config ============== */
+const char* WIFI_SSID = "Seb";
+const char* WIFI_PASS = "MLDSebbie21AI";
+
+String FIREBASE_PROJECT_ID = "kimboga-46a89";
+String FIREBASE_COLLECTION = "devices";
+String FIREBASE_DOCUMENT = "Q3IH0";
+String FIREBASE_URL = "https://firestore.googleapis.com/v1/projects/" + FIREBASE_PROJECT_ID +
+                      "/databases/(default)/documents/" + FIREBASE_COLLECTION + "/" + FIREBASE_DOCUMENT;
+
+/* ============== Pins ============== */
+#define DE_PIN        2   // RS485 Driver Enable
+#define RE_PIN        4   // RS485 Receiver Enable (Shared)
+#define RS485_RX_PIN  22
+#define RS485_TX_PIN  19
+
+#define DS18B20_PIN   14
+#define MOISTURE_PIN  35  // Capacitive Sensor (Analog)
+#define FAN_PIN       21
+#define HUMIDIFIER_PIN 13
+#define PUMP_PIN      23
+
+/* ============== State & Commands ============== */
+bool localHumidifier = false;
+
+// RS485 Commands
+const uint8_t NITRO_CMD[]  = {0x01,0x03,0x00,0x1E,0x00,0x01,0xE4,0x0C};
+const uint8_t PHOSP_CMD[]  = {0x01,0x03,0x00,0x1F,0x00,0x01,0xB5,0xCC};
+const uint8_t POTAS_CMD[]  = {0x01,0x03,0x00,0x20,0x00,0x01,0x85,0xC0};
+const uint8_t EC_CMD[]     = {0x01,0x03,0x00,0x15,0x00,0x01,0x95,0xCE};
+const uint8_t PH_CMD[]     = {0x01,0x03,0x00,0x06,0x00,0x01,0x64,0x0B};
+
+/* ============== DS18B20 Driver (Bit-Bang for Arduino) ============== */
+void onewire_low() {
+  pinMode(DS18B20_PIN, OUTPUT);
+  digitalWrite(DS18B20_PIN, LOW);
+}
+
+void onewire_release() {
+  pinMode(DS18B20_PIN, INPUT);
+}
+
+bool onewire_reset() {
+  onewire_low();
+  delayMicroseconds(480);
+  onewire_release();
+  delayMicroseconds(70);
+  int val = digitalRead(DS18B20_PIN);
+  delayMicroseconds(410);
+  return (val == 0);
+}
+
+void onewire_write_bit(int bit) {
+  if (bit) {
+    onewire_low(); delayMicroseconds(6);
+    onewire_release(); delayMicroseconds(64);
+  } else {
+    onewire_low(); delayMicroseconds(60);
+    onewire_release(); delayMicroseconds(10);
+  }
+}
+
+int onewire_read_bit() {
+  onewire_low(); delayMicroseconds(6);
+  onewire_release(); delayMicroseconds(9);
+  int bit = digitalRead(DS18B20_PIN);
+  delayMicroseconds(55);
+  return bit;
+}
+
+void onewire_write_byte(uint8_t b) {
+  for (int i = 0; i < 8; i++) onewire_write_bit((b >> i) & 1);
+}
+
+uint8_t onewire_read_byte() {
+  uint8_t res = 0;
+  for (int i = 0; i < 8; i++) {
+    if (onewire_read_bit()) res |= (1 << i);
+  }
+  return res;
+}
+
+float read_ds18b20() {
+  if (!onewire_reset()) return 0.0;
+  onewire_write_byte(0xCC); // Skip ROM
+  onewire_write_byte(0x44); // Convert
+  
+  // Non-blocking wait in main loop is better, but for simplicity we block here
+  // Note: Standard conversion takes 750ms. 
+  delay(750); 
+  
+  if (!onewire_reset()) return 0.0;
+  onewire_write_byte(0xCC);
+  onewire_write_byte(0xBE); // Read Scratchpad
+  
+  uint8_t lo = onewire_read_byte();
+  uint8_t hi = onewire_read_byte();
+  int16_t raw = (hi << 8) | lo;
+  return raw / 16.0;
+}
+
+/* ============== Sensor Helpers ============== */
+int read_rs485(const uint8_t *cmd, size_t len, String label) {
+  Serial.print("Reading "); Serial.println(label);
+  
+  // Enable TX
+  digitalWrite(DE_PIN, HIGH);
+  delay(10);
+  Serial2.write(cmd, len);
+  Serial2.flush(); // Wait for transmission to finish
+  
+  // Enable RX
+  digitalWrite(DE_PIN, LOW);
+  
+  uint8_t buf[10];
+  // Wait up to 200ms for response
+  unsigned long start = millis();
+  int idx = 0;
+  while (millis() - start < 200) {
+    if (Serial2.available()) {
+      buf[idx++] = Serial2.read();
+      if (idx >= 7) break; // Modbus frame is usually 7-8 bytes
+    }
+  }
+
+  if (idx >= 5) {
+    // If asking for Temperature or similar 16-bit values
+    if (label == "Temperature" || true) { 
+        return (buf[3] << 8) | buf[4];
+    }
+    return buf[3];
+  }
+  return 0;
+}
+
+int read_moisture() {
+  int raw = analogRead(MOISTURE_PIN);
+  // Calibration: Air ~ 3000-4095, Water ~ 1200
+  // Inverse logic: High Raw = Dry, Low Raw = Wet
+  int air_val = 3000;
+  int water_val = 1200;
+  
+  if (raw > air_val) raw = air_val;
+  if (raw < water_val) raw = water_val;
+  
+  return map(raw, water_val, air_val, 100, 0); // 100% wet, 0% dry
+}
+
+/* ============== Controls ============== */
+void toggle_humidifier() {
+  if (!localHumidifier) {
+    digitalWrite(HUMIDIFIER_PIN, LOW); // Active LOW
+    localHumidifier = true;
+  } else {
+    digitalWrite(HUMIDIFIER_PIN, HIGH);
+    localHumidifier = false;
+  }
+}
+
+/* ============== Setup ============== */
+void setup() {
+  Serial.begin(115200);
+  
+  // Init Pins
+  pinMode(DE_PIN, OUTPUT); digitalWrite(DE_PIN, LOW);
+  pinMode(FAN_PIN, OUTPUT); digitalWrite(FAN_PIN, HIGH); // OFF
+  pinMode(HUMIDIFIER_PIN, OUTPUT); digitalWrite(HUMIDIFIER_PIN, HIGH); // OFF
+  pinMode(PUMP_PIN, OUTPUT); digitalWrite(PUMP_PIN, HIGH); // OFF
+  pinMode(DS18B20_PIN, INPUT);
+
+  // Init RS485 UART
+  Serial2.begin(9600, SERIAL_8N1, RS485_RX_PIN, RS485_TX_PIN);
+
+  // Connect WiFi
+  WiFi.begin(WIFI_SSID, WIFI_PASS);
+  Serial.print("Connecting to WiFi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nConnected!");
+}
+
+/* ============== Main Loop ============== */
+void loop() {
+  // 1. Fetch Controls (GET)
+  bool fan_ctrl = false, pump_ctrl = false, humid_ctrl = false;
+  
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    http.begin(FIREBASE_URL);
+    int httpCode = http.GET();
+    if (httpCode == 200) {
+      String payload = http.getString();
+      // Simple string parsing to avoid external JSON library dependency errors
+      if (payload.indexOf("\"fan_state\": { \"booleanValue\": true }") > 0) fan_ctrl = true;
+      if (payload.indexOf("\"pump_state\": { \"booleanValue\": true }") > 0) pump_ctrl = true;
+      if (payload.indexOf("\"humidifier_state\": { \"booleanValue\": true }") > 0) humid_ctrl = true;
+    }
+    http.end();
+  }
+
+  // 2. Manual Overrides
+  if (fan_ctrl) digitalWrite(FAN_PIN, LOW); else digitalWrite(FAN_PIN, HIGH);
+  if (pump_ctrl) digitalWrite(PUMP_PIN, LOW); else digitalWrite(PUMP_PIN, HIGH);
+  
+  if (humid_ctrl && !localHumidifier) toggle_humidifier();
+  else if (!humid_ctrl && localHumidifier) toggle_humidifier();
+
+  // 3. Read Sensors
+  int nitro = read_rs485(NITRO_CMD, sizeof(NITRO_CMD), "Nitrogen");
+  int phosp = read_rs485(PHOSP_CMD, sizeof(PHOSP_CMD), "Phosphorus");
+  int potas = read_rs485(POTAS_CMD, sizeof(POTAS_CMD), "Potassium");
+  int ec    = read_rs485(EC_CMD, sizeof(EC_CMD), "Conductivity");
+  int ph    = read_rs485(PH_CMD, sizeof(PH_CMD), "pH");
+  
+  float soil_temp = read_ds18b20();
+  int moisture_pct = read_moisture();
+  
+  Serial.printf("Temp: %.2f | Moist: %d%%\n", soil_temp, moisture_pct);
+
+  // 4. Automatic Logic (Only if manual controls are OFF)
+  if (!fan_ctrl) {
+    if (soil_temp > 40) digitalWrite(FAN_PIN, LOW); else digitalWrite(FAN_PIN, HIGH);
+  }
+  
+  if (!pump_ctrl) {
+    if (moisture_pct < 20) digitalWrite(PUMP_PIN, LOW); else digitalWrite(PUMP_PIN, HIGH);
+  }
+
+  // 5. Send Data (PATCH)
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    http.begin(FIREBASE_URL + "?updateMask.fieldPaths=stats&updateMask.fieldPaths=controls");
+    http.addHeader("Content-Type", "application/json");
+
+    // Construct JSON Manually using String to ensure no compile errors
+    String json = "{ \"fields\": { \"stats\": { \"mapValue\": { \"fields\": {";
+    json += "\"nitrogen\": { \"doubleValue\": " + String(nitro) + " },";
+    json += "\"phosphorus\": { \"doubleValue\": " + String(phosp) + " },";
+    json += "\"potassium\": { \"doubleValue\": " + String(potas) + " },";
+    json += "\"ec\": { \"doubleValue\": " + String(ec) + " },";
+    json += "\"pH\": { \"doubleValue\": " + String(ph) + " },";
+    json += "\"soil_temp\": { \"doubleValue\": " + String(soil_temp) + " },";
+    json += "\"soil_moisture\": { \"doubleValue\": " + String(moisture_pct) + " },";
+    json += "\"air_temp\": { \"doubleValue\": 0 },";
+    json += "\"humidity\": { \"doubleValue\": 0 },";
+    json += "\"ambient_light\": { \"doubleValue\": 0 }";
+    json += "} } }, \"controls\": { \"mapValue\": { \"fields\": {";
+    json += "\"fan_state\": { \"booleanValue\": " + String(fan_ctrl ? "true" : "false") + " },";
+    json += "\"pump_state\": { \"booleanValue\": " + String(pump_ctrl ? "true" : "false") + " },";
+    json += "\"humidifier_state\": { \"booleanValue\": " + String(humid_ctrl ? "true" : "false") + " }";
+    json += "} } } } }";
+
+    int httpResponseCode = http.PATCH(json);
+    Serial.print("Firestore Update: "); Serial.println(httpResponseCode);
+    http.end();
+  }
+
+  delay(2000);
+}
