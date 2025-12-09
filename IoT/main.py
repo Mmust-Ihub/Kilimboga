@@ -322,11 +322,12 @@ while True:
 # v2
 #include <WiFi.h>
 #include <HTTPClient.h>
-#include <driver/adc.h> 
+#include <OneWire.h>            // Make sure this is installed
+#include <DallasTemperature.h>  // Make sure this is installed
 
 /* ============== Config ============== */
-const char* WIFI_SSID = "Seb";
-const char* WIFI_PASS = "MLDSebbie21AI";
+const char* WIFI_SSID = "calvoh";
+const char* WIFI_PASS = "ShotGGGG";
 
 String FIREBASE_PROJECT_ID = "kimboga-46a89";
 String FIREBASE_COLLECTION = "devices";
@@ -335,18 +336,22 @@ String FIREBASE_URL = "https://firestore.googleapis.com/v1/projects/" + FIREBASE
                       "/databases/(default)/documents/" + FIREBASE_COLLECTION + "/" + FIREBASE_DOCUMENT;
 
 /* ============== Pins ============== */
-#define DE_PIN        2   // RS485 Driver Enable
-#define RE_PIN        4   // RS485 Receiver Enable (Shared)
+#define DE_PIN        2   
+#define RE_PIN        4   
 #define RS485_RX_PIN  22
-#define RS485_TX_PIN  19
+#define RS485_TX_PIN  19 
 
-#define DS18B20_PIN   14
-#define MOISTURE_PIN  35  // Capacitive Sensor (Analog)
+#define DS18B20_PIN   14  // Temp Sensor
+#define MOISTURE_PIN  35  // Capacitive Sensor
 #define FAN_PIN       21
 #define HUMIDIFIER_PIN 13
 #define PUMP_PIN      23
 
-/* ============== State & Commands ============== */
+/* ============== Objects ============== */
+OneWire oneWire(DS18B20_PIN);
+DallasTemperature sensors(&oneWire);
+
+/* ============== State ============== */
 bool localHumidifier = false;
 
 // RS485 Commands
@@ -356,104 +361,53 @@ const uint8_t POTAS_CMD[]  = {0x01,0x03,0x00,0x20,0x00,0x01,0x85,0xC0};
 const uint8_t EC_CMD[]     = {0x01,0x03,0x00,0x15,0x00,0x01,0x95,0xCE};
 const uint8_t PH_CMD[]     = {0x01,0x03,0x00,0x06,0x00,0x01,0x64,0x0B};
 
-/* ============== DS18B20 Driver (Bit-Bang for Arduino) ============== */
-void onewire_low() {
-  pinMode(DS18B20_PIN, OUTPUT);
-  digitalWrite(DS18B20_PIN, LOW);
-}
+/* ============== Helpers ============== */
 
-void onewire_release() {
-  pinMode(DS18B20_PIN, INPUT);
-}
+// Helper to find boolean values in messy JSON
+bool extractBool(String json, String fieldName) {
+  int keyPos = json.indexOf("\"" + fieldName + "\"");
+  if (keyPos == -1) return false; // Key not found
+  
+  // Look for "booleanValue" after the key
+  int boolKeyPos = json.indexOf("booleanValue", keyPos);
+  if (boolKeyPos == -1) return false;
 
-bool onewire_reset() {
-  onewire_low();
-  delayMicroseconds(480);
-  onewire_release();
-  delayMicroseconds(70);
-  int val = digitalRead(DS18B20_PIN);
-  delayMicroseconds(410);
-  return (val == 0);
-}
-
-void onewire_write_bit(int bit) {
-  if (bit) {
-    onewire_low(); delayMicroseconds(6);
-    onewire_release(); delayMicroseconds(64);
-  } else {
-    onewire_low(); delayMicroseconds(60);
-    onewire_release(); delayMicroseconds(10);
+  // Look for "true" or "false" after booleanValue
+  int truePos = json.indexOf("true", boolKeyPos);
+  int falsePos = json.indexOf("false", boolKeyPos);
+  
+  // Determine which comes first (ignoring -1)
+  if (truePos != -1) {
+    // If 'true' is found, and (false is not found OR true is closer than false)
+    if (falsePos == -1 || truePos < falsePos) {
+       // Ensure it's part of THIS field (simple proximity check, <50 chars away)
+       if (truePos - boolKeyPos < 50) return true;
+    }
   }
+  return false;
 }
 
-int onewire_read_bit() {
-  onewire_low(); delayMicroseconds(6);
-  onewire_release(); delayMicroseconds(9);
-  int bit = digitalRead(DS18B20_PIN);
-  delayMicroseconds(55);
-  return bit;
-}
-
-void onewire_write_byte(uint8_t b) {
-  for (int i = 0; i < 8; i++) onewire_write_bit((b >> i) & 1);
-}
-
-uint8_t onewire_read_byte() {
-  uint8_t res = 0;
-  for (int i = 0; i < 8; i++) {
-    if (onewire_read_bit()) res |= (1 << i);
-  }
-  return res;
-}
-
-float read_ds18b20() {
-  if (!onewire_reset()) return 0.0;
-  onewire_write_byte(0xCC); // Skip ROM
-  onewire_write_byte(0x44); // Convert
-  
-  // Non-blocking wait in main loop is better, but for simplicity we block here
-  // Note: Standard conversion takes 750ms. 
-  delay(750); 
-  
-  if (!onewire_reset()) return 0.0;
-  onewire_write_byte(0xCC);
-  onewire_write_byte(0xBE); // Read Scratchpad
-  
-  uint8_t lo = onewire_read_byte();
-  uint8_t hi = onewire_read_byte();
-  int16_t raw = (hi << 8) | lo;
-  return raw / 16.0;
-}
-
-/* ============== Sensor Helpers ============== */
 int read_rs485(const uint8_t *cmd, size_t len, String label) {
-  Serial.print("Reading "); Serial.println(label);
+  while(Serial2.available()) Serial2.read(); // Clear buffer
   
-  // Enable TX
   digitalWrite(DE_PIN, HIGH);
   delay(10);
   Serial2.write(cmd, len);
-  Serial2.flush(); // Wait for transmission to finish
-  
-  // Enable RX
+  Serial2.flush(); 
   digitalWrite(DE_PIN, LOW);
   
   uint8_t buf[10];
-  // Wait up to 200ms for response
   unsigned long start = millis();
   int idx = 0;
-  while (millis() - start < 200) {
+  while (millis() - start < 300) {
     if (Serial2.available()) {
       buf[idx++] = Serial2.read();
-      if (idx >= 7) break; // Modbus frame is usually 7-8 bytes
+      if (idx >= 7) break; 
     }
   }
 
   if (idx >= 5) {
-    // If asking for Temperature or similar 16-bit values
-    if (label == "Temperature" || true) { 
-        return (buf[3] << 8) | buf[4];
-    }
+    if (label == "Temperature" || true) return (buf[3] << 8) | buf[4];
     return buf[3];
   }
   return 0;
@@ -461,21 +415,16 @@ int read_rs485(const uint8_t *cmd, size_t len, String label) {
 
 int read_moisture() {
   int raw = analogRead(MOISTURE_PIN);
-  // Calibration: Air ~ 3000-4095, Water ~ 1200
-  // Inverse logic: High Raw = Dry, Low Raw = Wet
   int air_val = 3000;
   int water_val = 1200;
-  
   if (raw > air_val) raw = air_val;
   if (raw < water_val) raw = water_val;
-  
-  return map(raw, water_val, air_val, 100, 0); // 100% wet, 0% dry
+  return map(raw, water_val, air_val, 100, 0); 
 }
 
-/* ============== Controls ============== */
 void toggle_humidifier() {
   if (!localHumidifier) {
-    digitalWrite(HUMIDIFIER_PIN, LOW); // Active LOW
+    digitalWrite(HUMIDIFIER_PIN, LOW); 
     localHumidifier = true;
   } else {
     digitalWrite(HUMIDIFIER_PIN, HIGH);
@@ -486,18 +435,17 @@ void toggle_humidifier() {
 /* ============== Setup ============== */
 void setup() {
   Serial.begin(115200);
-  
-  // Init Pins
-  pinMode(DE_PIN, OUTPUT); digitalWrite(DE_PIN, LOW);
-  pinMode(FAN_PIN, OUTPUT); digitalWrite(FAN_PIN, HIGH); // OFF
-  pinMode(HUMIDIFIER_PIN, OUTPUT); digitalWrite(HUMIDIFIER_PIN, HIGH); // OFF
-  pinMode(PUMP_PIN, OUTPUT); digitalWrite(PUMP_PIN, HIGH); // OFF
-  pinMode(DS18B20_PIN, INPUT);
+  sensors.begin(); // Start Temp Sensor Library
 
-  // Init RS485 UART
+  pinMode(DE_PIN, OUTPUT); digitalWrite(DE_PIN, LOW);
+  
+  // Set Relays to OFF (HIGH) initially
+  pinMode(FAN_PIN, OUTPUT); digitalWrite(FAN_PIN, HIGH);
+  pinMode(HUMIDIFIER_PIN, OUTPUT); digitalWrite(HUMIDIFIER_PIN, HIGH);
+  pinMode(PUMP_PIN, OUTPUT); digitalWrite(PUMP_PIN, HIGH);
+
   Serial2.begin(9600, SERIAL_8N1, RS485_RX_PIN, RS485_TX_PIN);
 
-  // Connect WiFi
   WiFi.begin(WIFI_SSID, WIFI_PASS);
   Serial.print("Connecting to WiFi");
   while (WiFi.status() != WL_CONNECTED) {
@@ -509,26 +457,32 @@ void setup() {
 
 /* ============== Main Loop ============== */
 void loop() {
-  // 1. Fetch Controls (GET)
-  bool fan_ctrl = false, pump_ctrl = false, humid_ctrl = false;
+  bool fan_ctrl = false;
+  bool pump_ctrl = false;
+  bool humid_ctrl = false;
   
+  // 1. GET Controls from Firebase
   if (WiFi.status() == WL_CONNECTED) {
     HTTPClient http;
     http.begin(FIREBASE_URL);
     int httpCode = http.GET();
     if (httpCode == 200) {
       String payload = http.getString();
-      // Simple string parsing to avoid external JSON library dependency errors
-      if (payload.indexOf("\"fan_state\": { \"booleanValue\": true }") > 0) fan_ctrl = true;
-      if (payload.indexOf("\"pump_state\": { \"booleanValue\": true }") > 0) pump_ctrl = true;
-      if (payload.indexOf("\"humidifier_state\": { \"booleanValue\": true }") > 0) humid_ctrl = true;
+      // Use the new Robust Parser
+      fan_ctrl   = extractBool(payload, "fan_state");
+      pump_ctrl  = extractBool(payload, "pump_state");
+      humid_ctrl = extractBool(payload, "humidifier_state");
+      
+      Serial.print("APP STATE -> Fan: "); Serial.print(fan_ctrl);
+      Serial.print(" | Pump: "); Serial.println(pump_ctrl);
     }
     http.end();
   }
 
-  // 2. Manual Overrides
-  if (fan_ctrl) digitalWrite(FAN_PIN, LOW); else digitalWrite(FAN_PIN, HIGH);
-  if (pump_ctrl) digitalWrite(PUMP_PIN, LOW); else digitalWrite(PUMP_PIN, HIGH);
+  // 2. Apply Manual Overrides
+  // Note: Relay logic assumes LOW = ON, HIGH = OFF
+  digitalWrite(FAN_PIN, fan_ctrl ? LOW : HIGH);
+  digitalWrite(PUMP_PIN, pump_ctrl ? LOW : HIGH);
   
   if (humid_ctrl && !localHumidifier) toggle_humidifier();
   else if (!humid_ctrl && localHumidifier) toggle_humidifier();
@@ -540,27 +494,32 @@ void loop() {
   int ec    = read_rs485(EC_CMD, sizeof(EC_CMD), "Conductivity");
   int ph    = read_rs485(PH_CMD, sizeof(PH_CMD), "pH");
   
-  float soil_temp = read_ds18b20();
+  sensors.requestTemperatures(); 
+  float soil_temp = sensors.getTempCByIndex(0);
+  if(soil_temp == -127.00) soil_temp = 0.0; // Error handling
+
   int moisture_pct = read_moisture();
   
-  Serial.printf("Temp: %.2f | Moist: %d%%\n", soil_temp, moisture_pct);
+  Serial.printf("Sensors -> Temp: %.2f | Moist: %d%%\n", soil_temp, moisture_pct);
 
-  // 4. Automatic Logic (Only if manual controls are OFF)
+  // 4. Automatic Logic (Only runs if Manual is OFF)
   if (!fan_ctrl) {
-    if (soil_temp > 40) digitalWrite(FAN_PIN, LOW); else digitalWrite(FAN_PIN, HIGH);
+    if (soil_temp > 40) digitalWrite(FAN_PIN, LOW); // ON
+    else digitalWrite(FAN_PIN, HIGH); // OFF
   }
   
   if (!pump_ctrl) {
-    if (moisture_pct < 20) digitalWrite(PUMP_PIN, LOW); else digitalWrite(PUMP_PIN, HIGH);
+    if (moisture_pct < 20) digitalWrite(PUMP_PIN, LOW); // ON
+    else digitalWrite(PUMP_PIN, HIGH); // OFF
   }
 
-  // 5. Send Data (PATCH)
+  // 5. Send Data to Firebase
   if (WiFi.status() == WL_CONNECTED) {
     HTTPClient http;
     http.begin(FIREBASE_URL + "?updateMask.fieldPaths=stats&updateMask.fieldPaths=controls");
     http.addHeader("Content-Type", "application/json");
 
-    // Construct JSON Manually using String to ensure no compile errors
+    // We report back exactly what the controls are set to (to sync UI)
     String json = "{ \"fields\": { \"stats\": { \"mapValue\": { \"fields\": {";
     json += "\"nitrogen\": { \"doubleValue\": " + String(nitro) + " },";
     json += "\"phosphorus\": { \"doubleValue\": " + String(phosp) + " },";
@@ -579,7 +538,6 @@ void loop() {
     json += "} } } } }";
 
     int httpResponseCode = http.PATCH(json);
-    Serial.print("Firestore Update: "); Serial.println(httpResponseCode);
     http.end();
   }
 
