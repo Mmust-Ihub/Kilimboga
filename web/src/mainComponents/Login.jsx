@@ -36,9 +36,10 @@ function Login() {
         let {value, error} = validate('login', formData)
 
         if (error) {
-            console.log(error)
+            // console.log(error)
             let message = error.details[0].message.replace(/"/g, '');
             toast.error(message)
+            setLoading(false);
             return
         }
 
