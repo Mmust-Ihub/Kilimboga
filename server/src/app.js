@@ -36,6 +36,10 @@ app.use(upload.any());
 if (config.env == "production") {
   app.use("/api/v1/auth", authLimit);
 }
+app.get("/", async (req, res) => {
+  res.status(200).json({ status: "success", message: "V1" });
+});
+
 app.get("/api/healthcheck", async (req, res) => {
   res.status(200).json({ status: "success", message: "Api is up and running...(v1)" });
 });
