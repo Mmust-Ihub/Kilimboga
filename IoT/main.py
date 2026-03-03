@@ -315,3 +315,231 @@ while True:
   
     
     time.sleep(2)  # Avoid excessive requests
+
+
+
+
+# v2
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <OneWire.h>            // Make sure this is installed
+#include <DallasTemperature.h>  // Make sure this is installed
+
+/* ============== Config ============== */
+const char* WIFI_SSID = "calvoh";
+const char* WIFI_PASS = "ShotGGGG";
+
+String FIREBASE_PROJECT_ID = "kimboga-46a89";
+String FIREBASE_COLLECTION = "devices";
+String FIREBASE_DOCUMENT = "Q3IH0";
+String FIREBASE_URL = "https://firestore.googleapis.com/v1/projects/" + FIREBASE_PROJECT_ID +
+                      "/databases/(default)/documents/" + FIREBASE_COLLECTION + "/" + FIREBASE_DOCUMENT;
+
+/* ============== Pins ============== */
+#define DE_PIN        2   
+#define RE_PIN        4   
+#define RS485_RX_PIN  22
+#define RS485_TX_PIN  19 
+
+#define DS18B20_PIN   14  // Temp Sensor
+#define MOISTURE_PIN  35  // Capacitive Sensor
+#define FAN_PIN       21
+#define HUMIDIFIER_PIN 13
+#define PUMP_PIN      23
+
+/* ============== Objects ============== */
+OneWire oneWire(DS18B20_PIN);
+DallasTemperature sensors(&oneWire);
+
+/* ============== State ============== */
+bool localHumidifier = false;
+
+// RS485 Commands
+const uint8_t NITRO_CMD[]  = {0x01,0x03,0x00,0x1E,0x00,0x01,0xE4,0x0C};
+const uint8_t PHOSP_CMD[]  = {0x01,0x03,0x00,0x1F,0x00,0x01,0xB5,0xCC};
+const uint8_t POTAS_CMD[]  = {0x01,0x03,0x00,0x20,0x00,0x01,0x85,0xC0};
+const uint8_t EC_CMD[]     = {0x01,0x03,0x00,0x15,0x00,0x01,0x95,0xCE};
+const uint8_t PH_CMD[]     = {0x01,0x03,0x00,0x06,0x00,0x01,0x64,0x0B};
+
+/* ============== Helpers ============== */
+
+// Helper to find boolean values in messy JSON
+bool extractBool(String json, String fieldName) {
+  int keyPos = json.indexOf("\"" + fieldName + "\"");
+  if (keyPos == -1) return false; // Key not found
+  
+  // Look for "booleanValue" after the key
+  int boolKeyPos = json.indexOf("booleanValue", keyPos);
+  if (boolKeyPos == -1) return false;
+
+  // Look for "true" or "false" after booleanValue
+  int truePos = json.indexOf("true", boolKeyPos);
+  int falsePos = json.indexOf("false", boolKeyPos);
+  
+  // Determine which comes first (ignoring -1)
+  if (truePos != -1) {
+    // If 'true' is found, and (false is not found OR true is closer than false)
+    if (falsePos == -1 || truePos < falsePos) {
+       // Ensure it's part of THIS field (simple proximity check, <50 chars away)
+       if (truePos - boolKeyPos < 50) return true;
+    }
+  }
+  return false;
+}
+
+int read_rs485(const uint8_t *cmd, size_t len, String label) {
+  while(Serial2.available()) Serial2.read(); // Clear buffer
+  
+  digitalWrite(DE_PIN, HIGH);
+  delay(10);
+  Serial2.write(cmd, len);
+  Serial2.flush(); 
+  digitalWrite(DE_PIN, LOW);
+  
+  uint8_t buf[10];
+  unsigned long start = millis();
+  int idx = 0;
+  while (millis() - start < 300) {
+    if (Serial2.available()) {
+      buf[idx++] = Serial2.read();
+      if (idx >= 7) break; 
+    }
+  }
+
+  if (idx >= 5) {
+    if (label == "Temperature" || true) return (buf[3] << 8) | buf[4];
+    return buf[3];
+  }
+  return 0;
+}
+
+int read_moisture() {
+  int raw = analogRead(MOISTURE_PIN);
+  int air_val = 3000;
+  int water_val = 1200;
+  if (raw > air_val) raw = air_val;
+  if (raw < water_val) raw = water_val;
+  return map(raw, water_val, air_val, 100, 0); 
+}
+
+void toggle_humidifier() {
+  if (!localHumidifier) {
+    digitalWrite(HUMIDIFIER_PIN, LOW); 
+    localHumidifier = true;
+  } else {
+    digitalWrite(HUMIDIFIER_PIN, HIGH);
+    localHumidifier = false;
+  }
+}
+
+/* ============== Setup ============== */
+void setup() {
+  Serial.begin(115200);
+  sensors.begin(); // Start Temp Sensor Library
+
+  pinMode(DE_PIN, OUTPUT); digitalWrite(DE_PIN, LOW);
+  
+  // Set Relays to OFF (HIGH) initially
+  pinMode(FAN_PIN, OUTPUT); digitalWrite(FAN_PIN, HIGH);
+  pinMode(HUMIDIFIER_PIN, OUTPUT); digitalWrite(HUMIDIFIER_PIN, HIGH);
+  pinMode(PUMP_PIN, OUTPUT); digitalWrite(PUMP_PIN, HIGH);
+
+  Serial2.begin(9600, SERIAL_8N1, RS485_RX_PIN, RS485_TX_PIN);
+
+  WiFi.begin(WIFI_SSID, WIFI_PASS);
+  Serial.print("Connecting to WiFi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nConnected!");
+}
+
+/* ============== Main Loop ============== */
+void loop() {
+  bool fan_ctrl = false;
+  bool pump_ctrl = false;
+  bool humid_ctrl = false;
+  
+  // 1. GET Controls from Firebase
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    http.begin(FIREBASE_URL);
+    int httpCode = http.GET();
+    if (httpCode == 200) {
+      String payload = http.getString();
+      // Use the new Robust Parser
+      fan_ctrl   = extractBool(payload, "fan_state");
+      pump_ctrl  = extractBool(payload, "pump_state");
+      humid_ctrl = extractBool(payload, "humidifier_state");
+      
+      Serial.print("APP STATE -> Fan: "); Serial.print(fan_ctrl);
+      Serial.print(" | Pump: "); Serial.println(pump_ctrl);
+    }
+    http.end();
+  }
+
+  // 2. Apply Manual Overrides
+  // Note: Relay logic assumes LOW = ON, HIGH = OFF
+  digitalWrite(FAN_PIN, fan_ctrl ? LOW : HIGH);
+  digitalWrite(PUMP_PIN, pump_ctrl ? LOW : HIGH);
+  
+  if (humid_ctrl && !localHumidifier) toggle_humidifier();
+  else if (!humid_ctrl && localHumidifier) toggle_humidifier();
+
+  // 3. Read Sensors
+  int nitro = read_rs485(NITRO_CMD, sizeof(NITRO_CMD), "Nitrogen");
+  int phosp = read_rs485(PHOSP_CMD, sizeof(PHOSP_CMD), "Phosphorus");
+  int potas = read_rs485(POTAS_CMD, sizeof(POTAS_CMD), "Potassium");
+  int ec    = read_rs485(EC_CMD, sizeof(EC_CMD), "Conductivity");
+  int ph    = read_rs485(PH_CMD, sizeof(PH_CMD), "pH");
+  
+  sensors.requestTemperatures(); 
+  float soil_temp = sensors.getTempCByIndex(0);
+  if(soil_temp == -127.00) soil_temp = 0.0; // Error handling
+
+  int moisture_pct = read_moisture();
+  
+  Serial.printf("Sensors -> Temp: %.2f | Moist: %d%%\n", soil_temp, moisture_pct);
+
+  // 4. Automatic Logic (Only runs if Manual is OFF)
+  if (!fan_ctrl) {
+    if (soil_temp > 40) digitalWrite(FAN_PIN, LOW); // ON
+    else digitalWrite(FAN_PIN, HIGH); // OFF
+  }
+  
+  if (!pump_ctrl) {
+    if (moisture_pct < 20) digitalWrite(PUMP_PIN, LOW); // ON
+    else digitalWrite(PUMP_PIN, HIGH); // OFF
+  }
+
+  // 5. Send Data to Firebase
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    http.begin(FIREBASE_URL + "?updateMask.fieldPaths=stats&updateMask.fieldPaths=controls");
+    http.addHeader("Content-Type", "application/json");
+
+    // We report back exactly what the controls are set to (to sync UI)
+    String json = "{ \"fields\": { \"stats\": { \"mapValue\": { \"fields\": {";
+    json += "\"nitrogen\": { \"doubleValue\": " + String(nitro) + " },";
+    json += "\"phosphorus\": { \"doubleValue\": " + String(phosp) + " },";
+    json += "\"potassium\": { \"doubleValue\": " + String(potas) + " },";
+    json += "\"ec\": { \"doubleValue\": " + String(ec) + " },";
+    json += "\"pH\": { \"doubleValue\": " + String(ph) + " },";
+    json += "\"soil_temp\": { \"doubleValue\": " + String(soil_temp) + " },";
+    json += "\"soil_moisture\": { \"doubleValue\": " + String(moisture_pct) + " },";
+    json += "\"air_temp\": { \"doubleValue\": 0 },";
+    json += "\"humidity\": { \"doubleValue\": 0 },";
+    json += "\"ambient_light\": { \"doubleValue\": 0 }";
+    json += "} } }, \"controls\": { \"mapValue\": { \"fields\": {";
+    json += "\"fan_state\": { \"booleanValue\": " + String(fan_ctrl ? "true" : "false") + " },";
+    json += "\"pump_state\": { \"booleanValue\": " + String(pump_ctrl ? "true" : "false") + " },";
+    json += "\"humidifier_state\": { \"booleanValue\": " + String(humid_ctrl ? "true" : "false") + " }";
+    json += "} } } } }";
+
+    int httpResponseCode = http.PATCH(json);
+    http.end();
+  }
+
+  delay(2000);
+}
