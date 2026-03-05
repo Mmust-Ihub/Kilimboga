@@ -8,14 +8,14 @@ import xss from "xss-clean";
 import httpStatus from "http-status";
 import config from "./config/config.js";
 import morgan from "./config/morgan.js";
-import multer from "multer"
+import multer from "multer";
 import { authLimit } from "./middleware/auth.middleware.js";
 import router from "./routes/v1/index.js";
 import { ApiError } from "./utils/APiError.js";
 import { errorConverter, errorHandler } from "./middleware/error.js";
 
 const app = express();
-const upload = multer()
+const upload = multer();
 
 if (config.env !== "test") {
   app.use(morgan.successHandler);
@@ -36,9 +36,15 @@ app.use(upload.any());
 if (config.env == "production") {
   app.use("/api/v1/auth", authLimit);
 }
-app.get("/api/healthcheck", async (req, res) => {
-  res.status(200).json({ status: "success", message: "Api is up and running...(Testing)" });
+app.get("/", (req, res) => {
+  res.status(200).json({
+    status: "healthy",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: config.env,
+  });
 });
+
 app.use("/api/v1", router);
 
 app.use(async (req, res, next) => {

@@ -5,7 +5,7 @@ import logger from "../config/logger.js";
 
 const seedAdmin = async () => {
   try {
-    const adminExists = await userModel.findOne({ role: allRoles.ADMIN });
+    const adminExists = await userModel.findOne({ email: config.admin.email });
     if (!adminExists) {
       const adminInfo = {
         ...config.admin,

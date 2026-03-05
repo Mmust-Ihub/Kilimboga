@@ -14,7 +14,7 @@ export const allowList = (initialObj, arrayToAllow) => {
 };
 
 export const generateCode = (length) => {
-  const charset = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const charset = "123456789ABCDEFGHIJKLMNPQRSTUVWXYZ";
   let code = "";
   for (let i = 0, n = charset.length; i < length; i++) {
     code += charset.charAt(Math.floor(Math.random() * n));
