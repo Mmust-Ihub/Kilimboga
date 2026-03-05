@@ -29,8 +29,6 @@ class Database {
 
       const resData = await res.json();
 
-      console.log(resData);
-
       response = {
         status: resData.status,
         message: resData.message,

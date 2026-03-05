@@ -146,31 +146,37 @@ function Admin() {
   }, [adminStats]);
 
   function printData() {
-    const updatedData = [...data];
-    const updatedUsersComposition = [...usersComposition];
+    try{
+      const updatedData = [...data];
+      const updatedUsersComposition = [...usersComposition];
 
-    adminStats.userGrowth.length > 0 &&
-      adminStats.userGrowth.forEach((item) => {
-        updatedData[item._id - 1].userGrowth = item.count;
-      });
+      adminStats.userGrowth.length > 0 &&
+        adminStats.userGrowth.forEach((item) => {
+          updatedData[item._id - 1].userGrowth = item.count;
+        });
 
-    adminStats.salesData.length > 0 &&
-      adminStats.salesData.forEach((item) => {
-        updatedData[item._id - 1].sales = item.totalSales;
-      });
+      console.log(adminStats.salesData)
 
-    adminStats.roleDistribution.length > 0 &&
-      adminStats.roleDistribution.forEach((item) => {
-        const user = updatedUsersComposition.find(
-          (x) => x.name.toLowerCase() === item._id
-        );
-        if (user) {
-          user.population = item.count;
-        }
-      });
+      adminStats.salesData.length > 0 &&
+        adminStats.salesData.forEach((item) => {
+          updatedData[item._id - 1].sales = item.totalSales;
+        });
 
-    setData(updatedData);
-    setUsersComposition(updatedUsersComposition);
+      adminStats.roleDistribution.length > 0 &&
+        adminStats.roleDistribution.forEach((item) => {
+          const user = updatedUsersComposition.find(
+            (x) => x.name.toLowerCase() === item._id
+          );
+          if (user) {
+            user.population = item.count;
+          }
+        });
+
+      setData(updatedData);
+      setUsersComposition(updatedUsersComposition);
+    }catch (e) {
+      console.log(e)
+    }
   }
 
   function logout() {
