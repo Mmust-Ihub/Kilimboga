@@ -405,9 +405,10 @@ class Database {
   }
 
   async getAdminUsers(token, role, status) {
+    const url = `${this.baseUrl}/api/v1/admin/users?role=${role}&isApproved=${status}`
     try {
       const res = await fetch(
-        `${this.baseUrl}/api/v1/admin/users?role=${role}&isApproved=${status}`,
+        url,
         {
           method: "GET",
           headers: {
@@ -416,9 +417,12 @@ class Database {
         }
       );
 
-      const resData = await res.json();
+      if (!res.ok) {
+        const resData = await res.json();
+        throw new Error(resData.message)
+      }
 
-      console.log(resData);
+      const resData = await res.json();
 
       return {
         status: true,
@@ -427,7 +431,6 @@ class Database {
       };
     } catch (err) {
       console.log(err);
-
       return {
         status: false,
         message: `Error when fetching ${role} ${status} users`,
