@@ -99,11 +99,10 @@ export const RegisterPage = () => {
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex", alignItems: "stretch" }}>
       {/* Left panel */}
-      <div style={{
-        width: 340, background: "linear-gradient(160deg,#052E16,#166534)", display: "flex",
-        flexDirection: "column", justifyContent: "center", padding: "48px 36px", position: "relative", overflow: "hidden",
+      <div className="hidden md:flex flex-col justify-center px-10 py-20 relative overflow-hidden" style={{
+        width: 340, background: "linear-gradient(160deg,#052E16,#166534)",
         flexShrink: 0
-      }} className="hidden md:flex">
+      }}>
         <div className="blob" style={{ width: 200, height: 200, background: "#16A34A", top: -40, right: -40 }} />
         <div className="blob" style={{ width: 160, height: 160, background: "#84CC16", bottom: 40, left: -40 }} />
         <div style={{ position: "relative", zIndex: 1 }}>

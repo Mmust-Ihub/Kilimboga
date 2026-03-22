@@ -218,9 +218,12 @@ class Database {
         body: formData,
       });
 
-      const resData = await res.json();
+      if (!res.ok) {
+        const resData = await res.json();
+        throw new Error(resData.message)
+      }
 
-      console.log(resData);
+      const resData = await res.json();
 
       let response = {
         status: true,
@@ -291,9 +294,12 @@ class Database {
         }
       );
 
-      const resData = await res.json();
+      if (!res.ok) {
+        const resData = await res.json();
+        throw new Error(resData.message)
+      }
 
-      console.log(resData);
+      const resData = await res.json();
 
       return {
         status: true,

@@ -171,12 +171,6 @@ export const LoginPage = () => {
           </div>
         </div>
 
-        {/* Hint */}
-        <div style={{ marginTop: 20, textAlign: "center" }}>
-          <p style={{ fontSize: 12, color: "rgba(134,239,172,0.4)", margin: 0 }}>
-            Demo: admin@farmlink.com / admin123 · vendor@farmlink.com / vendor123
-          </p>
-        </div>
       </div>
       <style>{`@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}`}</style>
     </div>
