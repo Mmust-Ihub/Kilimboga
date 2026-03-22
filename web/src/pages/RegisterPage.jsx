@@ -80,7 +80,7 @@ const RegisterPage = () => {
           }}>
             <Leaf size={22} color="#fff" />
           </div>
-          <h2 style={{ color: "#F0FDF4", fontWeight: 800, fontSize: 26, letterSpacing: "-0.04em", margin: "0 0 12px" }}>Join FarmLink</h2>
+          <h2 style={{ color: "#F0FDF4", fontWeight: 800, fontSize: 26, letterSpacing: "-0.04em", margin: "0 0 12px" }}>Join Kilimboga</h2>
           <p style={{ color: "rgba(134,239,172,0.8)", fontSize: 14, lineHeight: 1.7, margin: "0 0 32px" }}>
             Connect with farmers across Kenya. List your agricultural products and grow your business.
           </p>

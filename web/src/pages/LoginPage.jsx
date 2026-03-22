@@ -70,7 +70,7 @@ const LoginPage = () => {
           }}>
             <Leaf size={28} color="#fff" />
           </div>
-          <h1 style={{ margin: 0, color: "#F0FDF4", fontWeight: 800, fontSize: 28, letterSpacing: "-0.04em" }}>FarmLink</h1>
+          <h1 style={{ margin: 0, color: "#F0FDF4", fontWeight: 800, fontSize: 28, letterSpacing: "-0.04em" }}>Kilimboga</h1>
           <p style={{ margin: "6px 0 0", color: "rgba(134,239,172,0.8)", fontSize: 14 }}>Connecting the agricultural supply chain</p>
         </div>
 
