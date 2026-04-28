@@ -8,6 +8,7 @@ import { AppShell } from './layouts';
 
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import VerifyPage from './pages/VerifyPage';
 import VendorDashboard from './pages/VendorDashboard';
 import VendorProducts from './pages/VendorProducts';
 import VendorOrders from './pages/VendorOrders';
@@ -115,7 +116,7 @@ export default function App() {
   }, []);
 
   const navigate = useCallback((path) => {
-    if (!user && path !== "/login" && path !== "/register") { setRoute("/login"); return; }
+    if (!user && path !== "/login" && path !== "/register" && path !== "/verify") { setRoute("/login"); return; }
     if (user && path.startsWith("/vendor") && user.role !== "vendor") { setRoute("/admin/dashboard"); return; }
     if (user && path.startsWith("/admin") && user.role !== "admin") { setRoute("/vendor/dashboard"); return; }
     setRoute(path);
@@ -124,6 +125,7 @@ export default function App() {
   const renderPage = () => {
     if (!user) {
       if (route === "/register") return <RegisterPage />;
+      if (route === "/verify") return <VerifyPage />;
       return <LoginPage />;
     }
     const pages = {

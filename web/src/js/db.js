@@ -64,8 +64,6 @@ class Database {
 
       const resData = await res.json();
 
-      console.log(resData);
-
       response = {
         status: true,
         message: resData.success,

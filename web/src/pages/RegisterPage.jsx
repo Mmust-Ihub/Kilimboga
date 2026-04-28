@@ -20,14 +20,33 @@ const RegisterPage = () => {
   const sColors = ["#DC2626", "#D97706", "#16A34A", "#15803D"];
   const sLabels = ["Too short", "Weak", "Good", "Strong"];
 
+  // useEffect(() => {
+  //   toast("Registration complete! Please enter the verification code sent to your email.", "success");
+  //   if (navigator.geolocation) {
+  //     navigator.geolocation.getCurrentPosition(
+  //       (pos) => setForm(p => ({ ...p, lat: pos.coords.latitude, lng: pos.coords.longitude })),
+  //       (err) => console.error("Location error:", err)
+  //     );
+  //   }
+  // });
+
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => setForm(p => ({ ...p, lat: pos.coords.latitude, lng: pos.coords.longitude })),
-        (err) => console.error("Location error:", err)
-      );
-    }
-  });
+    toast("Your location will be used to help farmers find you easily.", "");
+    
+    const getLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => setForm(p => ({ ...p, lat: pos.coords.latitude, lng: pos.coords.longitude })),
+          (err) => {
+            console.error("Location error:", err);
+            setTimeout(getLocation, 3000);
+          }
+        );
+      }
+    };
+    
+    getLocation();
+  }, []);
 
   const addFiles = (incoming) => {
     const arr = Array.from(incoming).filter(f => ["application/pdf", "image/jpeg", "image/png"].includes(f.type));
@@ -58,8 +77,8 @@ const RegisterPage = () => {
     setLoading(false);
 
     if (res.status) {
-      toast("Registration submitted! Awaiting approval.", "success");
-      navigate("/login");
+      toast("Registration complete! Please enter the verification code sent to your email.", "success");
+      navigate("/verify");
     } else {
       toast(res.message || "Registration failed.", "error");
     }
@@ -68,7 +87,7 @@ const RegisterPage = () => {
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex", alignItems: "stretch" }}>
       {/* Left panel */}
-      <div className="hidden md:flex border border-4 flex-col justify-center px-10 py-20 relative overflow-hidden" style={{
+      <div className="hidden md:flex border flex-col justify-center px-10 py-20 relative overflow-hidden" style={{
         width: 340, background: "linear-gradient(160deg,#052E16,#166534)"
       }}>
         <div className="blob" style={{ width: 200, height: 200, background: "#16A34A", top: -40, right: -40 }} />
