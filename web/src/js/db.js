@@ -29,8 +29,6 @@ class Database {
 
       const resData = await res.json();
 
-      console.log(resData);
-
       response = {
         status: resData.status,
         message: resData.message,
@@ -65,8 +63,6 @@ class Database {
       });
 
       const resData = await res.json();
-
-      console.log(resData);
 
       response = {
         status: true,
@@ -220,9 +216,12 @@ class Database {
         body: formData,
       });
 
-      const resData = await res.json();
+      if (!res.ok) {
+        const resData = await res.json();
+        throw new Error(resData.message)
+      }
 
-      console.log(resData);
+      const resData = await res.json();
 
       let response = {
         status: true,
@@ -293,9 +292,12 @@ class Database {
         }
       );
 
-      const resData = await res.json();
+      if (!res.ok) {
+        const resData = await res.json();
+        throw new Error(resData.message)
+      }
 
-      console.log(resData);
+      const resData = await res.json();
 
       return {
         status: true,
@@ -407,9 +409,10 @@ class Database {
   }
 
   async getAdminUsers(token, role, status) {
+    const url = `${this.baseUrl}/api/v1/admin/users?role=${role}&isApproved=${status}`
     try {
       const res = await fetch(
-        `${this.baseUrl}/api/v1/admin/users?role=${role}&isApproved=${status}`,
+        url,
         {
           method: "GET",
           headers: {
@@ -418,9 +421,12 @@ class Database {
         }
       );
 
-      const resData = await res.json();
+      if (!res.ok) {
+        const resData = await res.json();
+        throw new Error(resData.message)
+      }
 
-      console.log(resData);
+      const resData = await res.json();
 
       return {
         status: true,
@@ -429,7 +435,6 @@ class Database {
       };
     } catch (err) {
       console.log(err);
-
       return {
         status: false,
         message: `Error when fetching ${role} ${status} users`,
